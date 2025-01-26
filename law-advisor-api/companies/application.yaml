@@ -1,0 +1,21 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: companies-service
+  datasource:
+    url: jdbc:postgresql://database:5432/companies_db
+    username: companies_user
+    password: companies_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: dev
+
+logging:
+  level:
+    org.springframework: INFO

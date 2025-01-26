@@ -1,0 +1,18 @@
+services:
+  companies:
+    build:
+      context: ./companies
+      dockerfile: Dockerfile
+    container_name: companies_service
+    ports:
+      - "8081:8081"
+
+  database:
+    image: postgres:15
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: shared_user
+      POSTGRES_PASSWORD: shared_password
+      POSTGRES_DB: shared_db
+    ports:
+      - "5432:5432"

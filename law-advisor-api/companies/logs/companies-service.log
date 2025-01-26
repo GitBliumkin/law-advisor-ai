@@ -1,0 +1,21 @@
+2025-01-25T20:40:07.302-05:00  INFO 21460 --- [main] com.companies.api.Api                    : Starting Api using Java 17.0.10 with PID 21460 (C:\Users\blium\law-advisor-ai\law-advisor-api\companies\target\classes started by blium in C:\Users\blium\law-advisor-ai\law-advisor-api\companies)
+2025-01-25T20:40:07.304-05:00  INFO 21460 --- [main] com.companies.api.Api                    : The following 1 profile is active: "dev"
+2025-01-25T20:40:08.245-05:00  INFO 21460 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-01-25T20:40:08.254-05:00  INFO 21460 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-01-25T20:40:08.255-05:00  INFO 21460 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-01-25T20:40:08.361-05:00  INFO 21460 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-01-25T20:40:08.361-05:00  INFO 21460 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1007 ms
+2025-01-25T20:40:08.718-05:00  INFO 21460 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-01-25T20:40:08.729-05:00  INFO 21460 --- [main] com.companies.api.Api                    : Started Api in 1.828 seconds (process running for 2.119)
+2025-01-25T20:41:18.752-05:00  INFO 8560 --- [main] com.companies.api.Api                    : Starting Api using Java 17.0.10 with PID 8560 (C:\Users\blium\law-advisor-ai\law-advisor-api\companies\target\classes started by blium in C:\Users\blium\law-advisor-ai\law-advisor-api\companies)
+2025-01-25T20:41:18.754-05:00  INFO 8560 --- [main] com.companies.api.Api                    : The following 1 profile is active: "dev"
+2025-01-25T20:41:19.694-05:00  INFO 8560 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-01-25T20:41:19.702-05:00  INFO 8560 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-01-25T20:41:19.702-05:00  INFO 8560 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-01-25T20:41:19.796-05:00  INFO 8560 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-01-25T20:41:19.796-05:00  INFO 8560 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 993 ms
+2025-01-25T20:41:20.147-05:00  INFO 8560 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-01-25T20:41:20.157-05:00  INFO 8560 --- [main] com.companies.api.Api                    : Started Api in 1.802 seconds (process running for 2.091)
+2025-01-25T20:44:17.102-05:00  INFO 8560 --- [http-nio-8081-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-01-25T20:44:17.102-05:00  INFO 8560 --- [http-nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-01-25T20:44:17.103-05:00  INFO 8560 --- [http-nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms

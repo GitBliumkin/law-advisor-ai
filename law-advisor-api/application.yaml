@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: law-advisor
+  profiles:
+    active: dev # Default profile; can be overridden by environment variables
+  cloud:
+    config:
+      enabled: false # Enable if using Spring Cloud Config Server
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+  file:
+    name: logs/law-advisor.log # Common log file for all services
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info # Common management endpoints
+
+server:
+  error:
+    include-stacktrace: never # Configure global error behavior

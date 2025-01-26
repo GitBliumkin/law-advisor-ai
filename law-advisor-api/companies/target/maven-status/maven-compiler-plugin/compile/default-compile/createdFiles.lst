@@ -1,1 +1,2 @@
-com\law_advisor\api\LawAdvisorApiApplication.class
+com\companies\api\Api.class
+com\companies\api\controllers\RegistrationController.class
