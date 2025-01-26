@@ -1,14 +1,8 @@
 package com.companies.api.repositories;
 
+import com.companies.api.tables.CompanyProfileTable;
+import com.shared.basecrud.repositories.BaseRepository;
 import org.springframework.stereotype.Repository;
 
-import com.companies.api.dtos.CompanyProfileDto;
-import com.shared.basecrud.repositories.BaseRepository;
-
 @Repository
-public class CompanyProfileRepository extends BaseRepository<CompanyProfileDto> {
-
-    public CompanyProfileRepository() {
-        super(CompanyProfileDto.class);
-    }
-}
+public interface CompanyProfileRepository extends BaseRepository<CompanyProfileTable> {}

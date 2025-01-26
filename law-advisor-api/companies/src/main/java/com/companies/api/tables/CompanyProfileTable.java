@@ -1,21 +1,22 @@
-package com.shared.models.requests;
+package com.companies.api.tables;
 
-import com.shared.basecrud.dtos.requests.BaseRequest;
-import java.util.UUID;
+import com.shared.basecrud.tables.BaseTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-public class CompanyProfileRequest extends BaseRequest {
-  private UUID id;
+@Entity
+@Table(name = "company_profiles")
+public class CompanyProfileTable extends BaseTable {
+
+  @Column(nullable = false)
   private String companyName;
+
+  @Column(nullable = false)
   private String province;
+
+  @Column(nullable = false)
   private String country;
-
-  public UUID getId() {
-    return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
-  }
 
   public String getCompanyName() {
     return companyName;

@@ -1,38 +1,28 @@
 package com.shared.basecrud.dtos.responses;
 
-import java.time.LocalDateTime;
+public class BaseErrorResponse extends BaseResponse {
+  // TODO Implement ENUM
+  private String error;
+  private String message;
+  // TODO Implement ENUM
+  private String serviceName;
 
-public class BaseErrorResponse {
-    private LocalDateTime timestamp;
-    private String error;
-    private String message;
-    private String serviceName;
+  public BaseErrorResponse(String error, String message, String serviceName) {
+    super("ERROR");
+    this.error = error;
+    this.message = message;
+    this.serviceName = serviceName;
+  }
 
-    public BaseErrorResponse() {
-        this.timestamp = LocalDateTime.now();
-    }
+  public String getError() {
+    return error;
+  }
 
-    public BaseErrorResponse(String error, String message, String serviceName) {
-        this();
-        this.error = error;
-        this.message = message;
-        this.serviceName = serviceName;
-    }
+  public String getMessage() {
+    return message;
+  }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
+  public String getServiceName() {
+    return serviceName;
+  }
 }

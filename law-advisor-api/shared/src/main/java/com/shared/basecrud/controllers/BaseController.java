@@ -1,9 +1,12 @@
 package com.shared.basecrud.controllers;
 
-import java.util.List;
-
+import com.shared.basecrud.dtos.requests.BaseRequest;
+import com.shared.basecrud.dtos.responses.BaseErrorResponse;
+import com.shared.basecrud.dtos.responses.BaseListResponse;
+import com.shared.basecrud.dtos.responses.BaseResponse;
+import com.shared.basecrud.handlers.BaseHandlerService;
+import com.shared.basecrud.tables.BaseTable;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,88 +15,82 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.shared.basecrud.dtos.requests.BaseRequest;
-import com.shared.basecrud.dtos.responses.BaseErrorResponse;
-import com.shared.basecrud.dtos.responses.BaseResponse;
-import com.shared.basecrud.dtos.tables.BaseTableRowDto;
-import com.shared.basecrud.handlers.BaseHandlerService;
+public abstract class BaseController<
+    Request extends BaseRequest,
+    Response extends BaseResponse,
+    ListResponse extends BaseListResponse<Response>,
+    Table extends BaseTable> {
 
-public abstract class BaseController<Request extends BaseRequest, Response extends BaseResponse, TableRow extends BaseTableRowDto, Handler extends BaseHandlerService<TableRow>> {
+  private static Logger logger;
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
+  protected final BaseHandlerService<Request, Response, ListResponse, Table> handler;
 
-    protected abstract TableRow convertRequestToTableRow(Request request);
+  protected BaseController(
+      BaseHandlerService<Request, Response, ListResponse, Table> handler, Logger logger) {
+    this.handler = handler;
+    this.logger = logger;
+  }
 
-    protected abstract Response convertTableRowToResponse(TableRow row);
+  protected ResponseEntity<Object> handleError(Exception e, String path) {
+    logger.error("Error occurred: {}", e.getMessage(), e);
+    BaseErrorResponse errorResponse =
+        new BaseErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(), path);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+  }
 
-    protected abstract List<Response> convertTableRowToListResponse(List<TableRow> rows);
-
-    protected final Handler handler;
-
-    protected BaseController(Handler handler) {
-        this.handler = handler;
+  @GetMapping
+  public ResponseEntity<Object> getAll(
+      @RequestParam(required = false, defaultValue = "-1") int page,
+      @RequestParam(required = false, defaultValue = "-1") int size,
+      @RequestParam(required = false) String query) {
+    try {
+      ListResponse listResponse = this.handler.getAll(size, page);
+      return ResponseEntity.ok(listResponse);
+    } catch (Exception e) {
+      return handleError(e, "/");
     }
+  }
 
-    protected ResponseEntity<Object> handleError(Exception e, String path) {
-        logger.error("Error occurred: {}", e.getMessage(), e);
-        BaseErrorResponse errorResponse = new BaseErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                e.getMessage(),
-                path
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+  @GetMapping("/{id}")
+  public ResponseEntity<Object> getById(@PathVariable String id) {
+    try {
+      Response response = this.handler.getById(id);
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      return handleError(e, "/{id}");
     }
+  }
 
-    @GetMapping
-    public ResponseEntity<Object> getAll() {
-        try {
-            List<TableRow> rows = this.handler.getAll();
-            return ResponseEntity.ok(convertTableRowToListResponse(rows));
-        } catch (Exception e) {
-            return handleError(e, "/");
-        }
+  @PostMapping
+  public ResponseEntity<Object> create(@RequestBody Request request) {
+    try {
+      Response response = this.handler.create(request);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    } catch (Exception e) {
+      return handleError(e, "/");
     }
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable String id) {
-        try {
-            TableRow row = this.handler.getById(id);
-            return ResponseEntity.ok(this.convertTableRowToResponse(row));
-        } catch (Exception e) {
-            return handleError(e, "/{id}");
-        }
+  @PutMapping("/{id}")
+  public ResponseEntity<Object> update(@PathVariable String id, @RequestBody Request request) {
+    try {
+      Response response = this.handler.update(request);
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      return handleError(e, "/{id}");
     }
+  }
 
-    @PostMapping
-    public ResponseEntity<Object> create(@RequestBody Request request) {
-        try {
-            TableRow newTableRow = this.convertRequestToTableRow(request);
-            TableRow createdRow = this.handler.create(newTableRow);
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.convertTableRowToResponse(createdRow));
-        } catch (Exception e) {
-            return handleError(e, "/");
-        }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Object> delete(@PathVariable String id) {
+    try {
+      this.handler.delete(id);
+      return ResponseEntity.noContent().build();
+    } catch (Exception e) {
+      return handleError(e, "/{id}");
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable String id, @RequestBody Request request) {
-        try {
-            TableRow changedTableRow = this.convertRequestToTableRow(request);
-            TableRow updatedTableRow = this.handler.update(changedTableRow);
-            return ResponseEntity.ok(this.convertTableRowToResponse(updatedTableRow));
-        } catch (Exception e) {
-            return handleError(e, "/{id}");
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable String id) {
-        try {
-            this.handler.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return handleError(e, "/{id}");
-        }
-    }
+  }
 }
