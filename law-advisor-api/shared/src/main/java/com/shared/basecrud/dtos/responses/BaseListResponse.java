@@ -10,9 +10,7 @@ public class BaseListResponse<T extends BaseDto> extends BaseResponse {
   private Number totalCount;
   private Number totalPages;
 
-  public BaseListResponse() {
-    super("SUCCESS");
-  }
+  public BaseListResponse() {}
 
   public List<T> getData() {
     return data;

@@ -1,14 +1,11 @@
 package com.shared.basecrud.controllers;
 
 import com.shared.basecrud.dtos.requests.BaseRequest;
-import com.shared.basecrud.dtos.responses.BaseErrorResponse;
 import com.shared.basecrud.dtos.responses.BaseListResponse;
 import com.shared.basecrud.dtos.responses.BaseResponse;
 import com.shared.basecrud.handlers.BaseHandlerService;
 import com.shared.basecrud.tables.BaseTable;
 import org.slf4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,73 +21,64 @@ public abstract class BaseController<
     Table extends BaseTable> {
 
   private static Logger logger;
-
   protected final BaseHandlerService<Request, Response, ListResponse, Table> handler;
 
   protected BaseController(
-      BaseHandlerService<Request, Response, ListResponse, Table> handler, Logger logger) {
-    this.handler = handler;
+      Logger logger, BaseHandlerService<Request, Response, ListResponse, Table> handler) {
     this.logger = logger;
-  }
-
-  protected ResponseEntity<Object> handleError(Exception e, String path) {
-    logger.error("Error occurred: {}", e.getMessage(), e);
-    BaseErrorResponse errorResponse =
-        new BaseErrorResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(), path);
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    this.handler = handler;
   }
 
   @GetMapping
-  public ResponseEntity<Object> getAll(
+  public ListResponse getAll(
       @RequestParam(required = false, defaultValue = "-1") int page,
       @RequestParam(required = false, defaultValue = "-1") int size,
       @RequestParam(required = false) String query) {
     try {
       ListResponse listResponse = this.handler.getAll(size, page);
-      return ResponseEntity.ok(listResponse);
+      return listResponse;
     } catch (Exception e) {
-      return handleError(e, "/");
+      return this.handler.createErrorListResponse(e);
     }
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Object> getById(@PathVariable String id) {
+  public Response getById(@PathVariable String id) {
     try {
       Response response = this.handler.getById(id);
-      return ResponseEntity.ok(response);
+      return response;
     } catch (Exception e) {
-      return handleError(e, "/{id}");
+      return this.handler.createErrorResponse(e);
     }
   }
 
   @PostMapping
-  public ResponseEntity<Object> create(@RequestBody Request request) {
+  public Response create(@RequestBody Request request) {
     try {
       Response response = this.handler.create(request);
-      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+      return response;
     } catch (Exception e) {
-      return handleError(e, "/");
+      return this.handler.createErrorResponse(e);
     }
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> update(@PathVariable String id, @RequestBody Request request) {
+  public Response update(@PathVariable String id, @RequestBody Request request) {
     try {
       Response response = this.handler.update(request);
-      return ResponseEntity.ok(response);
+      return response;
     } catch (Exception e) {
-      return handleError(e, "/{id}");
+      return this.handler.createErrorResponse(e);
     }
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Object> delete(@PathVariable String id) {
+  public Response delete(@PathVariable String id) {
     try {
       this.handler.delete(id);
-      return ResponseEntity.noContent().build();
+      return this.handler.delete(id);
     } catch (Exception e) {
-      return handleError(e, "/{id}");
+      return this.handler.createErrorResponse(e);
     }
   }
 }

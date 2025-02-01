@@ -1,5 +1,6 @@
-com\companies\api\Api.class
+com\companies\api\configurations\SharedConfig.class
 com\companies\api\handlers\CompanyProfileHandlerService.class
-com\companies\api\repositories\CompanyProfileRepository.class
 com\companies\api\controllers\CompanyProfileController.class
+com\companies\api\Api.class
+com\companies\api\repositories\CompanyProfileRepository.class
 com\companies\api\tables\CompanyProfileTable.class

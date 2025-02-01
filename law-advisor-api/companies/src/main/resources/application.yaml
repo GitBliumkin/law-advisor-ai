@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: companies-service
+
+  datasource:
+    url: jdbc:postgresql://host.docker.internal:5432/companies_db
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8081
+
+logging:
+  level:
+    org:
+      springframework: INFO

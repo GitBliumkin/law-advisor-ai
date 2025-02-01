@@ -29,6 +29,10 @@ public abstract class BaseHandlerService<
   protected abstract ListResponse convertRowsToListResponse(
       List<Table> rows, int size, int page, int totalCount, int totalPages);
 
+  public abstract Response createErrorResponse(Exception error);
+
+  public abstract ListResponse createErrorListResponse(Exception error);
+
   public ListResponse getAll(int size, int page) {
     if (size == -1 || page == -1) {
       List<Table> rows = repository.findAll();
@@ -64,7 +68,13 @@ public abstract class BaseHandlerService<
     return convertRowToResponse(savedRow);
   }
 
-  public void delete(String id) {
+  public Response delete(String id) {
+    Optional<Table> entityOptional = repository.findById(id);
+    Table entity =
+        entityOptional.orElseThrow(
+            () -> new IllegalArgumentException("Object not found for ID: " + id));
     repository.deleteById(id);
+    Response response = convertRowToResponse(entity);
+    return response;
   }
 }

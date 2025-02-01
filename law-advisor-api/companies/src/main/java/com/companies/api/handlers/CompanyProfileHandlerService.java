@@ -33,7 +33,7 @@ public class CompanyProfileHandlerService
     row.setCompanyName(request.getCompanyName());
     row.setProvince(request.getProvince());
     row.setCountry(request.getCountry());
-    return table;
+    return row;
   }
 
   @Override
@@ -48,8 +48,7 @@ public class CompanyProfileHandlerService
 
   @Override
   protected CompanyProfileListResponse convertRowsToListResponse(
-      List<CompanyProfileTable> rows, int size, long totalCount, int totalPages) {
-    // Convert rows to DTOs
+      List<CompanyProfileTable> rows, int size, int page, int totalCount, int totalPages) {
     List<CompanyProfileResponse> dtos =
         rows.stream().map(this::convertRowToResponse).collect(Collectors.toList());
 
@@ -62,5 +61,15 @@ public class CompanyProfileHandlerService
     response.setTotalPages(totalPages);
 
     return response;
+  }
+
+  @Override
+  public CompanyProfileResponse createErrorResponse(Exception error) {
+    return new CompanyProfileResponse();
+  }
+
+  @Override
+  public CompanyProfileListResponse createErrorListResponse(Exception error) {
+    return new CompanyProfileListResponse();
   }
 }

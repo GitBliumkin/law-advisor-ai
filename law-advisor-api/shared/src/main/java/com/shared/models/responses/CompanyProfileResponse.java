@@ -9,9 +9,7 @@ public class CompanyProfileResponse extends BaseResponse {
   private String province;
   private String country;
 
-  public CompanyProfileResponse(String status) {
-    super(status);
-  }
+  public CompanyProfileResponse() {}
 
   public UUID getId() {
     return id;

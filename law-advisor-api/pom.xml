@@ -12,6 +12,12 @@
         <module>companies</module>
         <module>laws</module>
     </modules>
+    
+    <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.1.0</version>
+</parent>
 
     <properties>
         <java.version>17</java.version>
@@ -27,6 +33,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+			    <groupId>com.lawadvisor</groupId>
+			    <artifactId>shared</artifactId>
+			    <version>1.0.0</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -4,10 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@MappedSuperclass
 public class BaseTable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

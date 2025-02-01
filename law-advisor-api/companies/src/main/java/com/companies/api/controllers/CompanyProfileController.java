@@ -8,6 +8,7 @@ import com.shared.models.responses.CompanyProfileListResponse;
 import com.shared.models.responses.CompanyProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,10 +22,10 @@ public class CompanyProfileController
         CompanyProfileTable> {
 
   private CompanyProfileHandlerService handler;
-
   private static final Logger logger = LoggerFactory.getLogger(CompanyProfileController.class);
 
+  @Autowired
   protected CompanyProfileController(CompanyProfileHandlerService handler) {
-    super(handler, logger);
+    super(logger, handler);
   }
 }
