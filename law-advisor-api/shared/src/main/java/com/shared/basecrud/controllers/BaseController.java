@@ -1,11 +1,15 @@
 package com.shared.basecrud.controllers;
 
+import com.shared.basecrud.dtos.BaseDto;
 import com.shared.basecrud.dtos.requests.BaseRequest;
 import com.shared.basecrud.dtos.responses.BaseListResponse;
 import com.shared.basecrud.dtos.responses.BaseResponse;
 import com.shared.basecrud.handlers.BaseHandlerService;
 import com.shared.basecrud.tables.BaseTable;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,70 +19,80 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public abstract class BaseController<
-    Request extends BaseRequest,
-    Response extends BaseResponse,
-    ListResponse extends BaseListResponse<Response>,
-    Table extends BaseTable> {
+    Request extends BaseRequest, Dto extends BaseDto, Table extends BaseTable> {
 
+  private String serviceName;
   private static Logger logger;
-  protected final BaseHandlerService<Request, Response, ListResponse, Table> handler;
+  protected final BaseHandlerService<Request, Dto, Table> handler;
 
-  protected BaseController(
-      Logger logger, BaseHandlerService<Request, Response, ListResponse, Table> handler) {
-    this.logger = logger;
+  protected BaseController(Class serivce, BaseHandlerService<Request, Dto, Table> handler) {
+    this.logger = LoggerFactory.getLogger(serivce);
+    this.serviceName = serivce.getCanonicalName();
     this.handler = handler;
   }
 
   @GetMapping
-  public ListResponse getAll(
+  public BaseListResponse<Dto> getAll(
       @RequestParam(required = false, defaultValue = "-1") int page,
       @RequestParam(required = false, defaultValue = "-1") int size,
       @RequestParam(required = false) String query) {
     try {
-      ListResponse listResponse = this.handler.getAll(size, page);
-      return listResponse;
+      Map<String, Object> data = this.handler.getAll(size, page);
+      return BaseListResponse.success(
+          this.serviceName,
+          (List<Dto>) data.get("data"),
+          (Integer) data.get("size"),
+          (Integer) data.get("page"),
+          (Integer) data.get("totalCount"),
+          (Integer) data.get("totalPages"));
     } catch (Exception e) {
-      return this.handler.createErrorListResponse(e);
+      this.logger.error("Error caught in base get all", e);
+      return BaseListResponse.errorList(this.serviceName, e.getMessage());
     }
   }
 
   @GetMapping("/{id}")
-  public Response getById(@PathVariable String id) {
+  public BaseResponse<Dto> getById(@PathVariable String id) {
     try {
-      Response response = this.handler.getById(id);
-      return response;
+      Dto dto = this.handler.getById(id);
+      return BaseResponse.success(this.serviceName, dto);
     } catch (Exception e) {
-      return this.handler.createErrorResponse(e);
+      this.logger.error("Error caught in base get", e);
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
   }
 
   @PostMapping
-  public Response create(@RequestBody Request request) {
+  public BaseResponse<Dto> create(@RequestBody Request request) {
     try {
-      Response response = this.handler.create(request);
-      return response;
+      Dto dto = this.handler.create(request);
+      return BaseResponse.success(this.serviceName, dto);
     } catch (Exception e) {
-      return this.handler.createErrorResponse(e);
+      this.logger.error("Error caught in base create", e);
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
   }
 
-  @PutMapping("/{id}")
-  public Response update(@PathVariable String id, @RequestBody Request request) {
+  @PutMapping
+  public BaseResponse<Dto> update(@RequestBody Request request) {
     try {
-      Response response = this.handler.update(request);
-      return response;
+      Dto dto = this.handler.update(request);
+      return BaseResponse.success(this.serviceName, dto);
     } catch (Exception e) {
-      return this.handler.createErrorResponse(e);
+      this.logger.error("Error caught in base update", e);
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
   }
 
   @DeleteMapping("/{id}")
-  public Response delete(@PathVariable String id) {
+  public BaseResponse<Dto> delete(@PathVariable String id) {
     try {
       this.handler.delete(id);
-      return this.handler.delete(id);
+      return BaseResponse.success(this.serviceName, dto);
     } catch (Exception e) {
-      return this.handler.createErrorResponse(e);
+      this.logger.error("Error caught in base delete", e);
+
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
   }
 }

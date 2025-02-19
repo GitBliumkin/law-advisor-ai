@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 public class CompanyProfileTable extends BaseTable {
 
   @Column(nullable = false)
-  private String companyName;
+  private String name;
 
   @Column(nullable = false)
   private String province;
@@ -18,12 +18,12 @@ public class CompanyProfileTable extends BaseTable {
   @Column(nullable = false)
   private String country;
 
-  public String getCompanyName() {
-    return companyName;
+  public String getName() {
+    return name;
   }
 
-  public void setCompanyName(String companyName) {
-    this.companyName = companyName;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getProvince() {

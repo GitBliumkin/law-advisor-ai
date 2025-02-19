@@ -3,52 +3,66 @@ package com.shared.basecrud.dtos.responses;
 import com.shared.basecrud.dtos.BaseDto;
 import java.util.List;
 
-public class BaseListResponse<T extends BaseDto> extends BaseResponse {
-  private List<T> data;
-  private Number count;
-  private Number size;
-  private Number totalCount;
-  private Number totalPages;
+public class BaseListResponse<Dto extends BaseDto>
+    extends BaseResponse<BaseListResponse.Payload<Dto>> {
 
-  public BaseListResponse() {}
-
-  public List<T> getData() {
-    return data;
+  private BaseListResponse(
+      String serviceName, boolean success, Payload<Dto> payload, String errorMessage) {
+    super(serviceName, success, payload, errorMessage);
   }
 
-  public void setData(List<T> data) {
-    this.data = data;
+  // ✅ Static factory method for success response
+  public static <Dto extends BaseDto> BaseListResponse<Dto> success(
+      String serviceName,
+      List<Dto> data,
+      Integer size,
+      Integer page,
+      Integer totalCount,
+      Integer totalPages) {
+    return new BaseListResponse<>(
+        serviceName, true, new Payload<>(data, size, page, totalCount, totalPages), null);
   }
 
-  public Number getCount() {
-    return count;
+  // ✅ Static factory method for error response
+  public static <Dto extends BaseDto> BaseListResponse<Dto> errorList(
+      String serviceName, String errorMessage) {
+    return new BaseListResponse<>(serviceName, false, null, errorMessage);
   }
 
-  public void setCount(Number count) {
-    this.count = count;
-  }
+  public static class Payload<Dto extends BaseDto> {
+    private final List<Dto> data;
+    private final Integer size;
+    private final Integer page;
+    private final Integer totalCount;
+    private final Integer totalPages;
 
-  public Number getSize() {
-    return size;
-  }
+    public Payload(
+        List<Dto> data, Integer size, Integer page, Integer totalCount, Integer totalPages) {
+      this.data = data;
+      this.size = size;
+      this.page = page;
+      this.totalCount = totalCount;
+      this.totalPages = totalPages;
+    }
 
-  public void setSize(Number size) {
-    this.size = size;
-  }
+    public List<Dto> getData() {
+      return data;
+    }
 
-  public Number getTotalCount() {
-    return totalCount;
-  }
+    public Integer getSize() {
+      return size;
+    }
 
-  public void setTotalCount(Number totalCount) {
-    this.totalCount = totalCount;
-  }
+    public Integer getPage() {
+      return page;
+    }
 
-  public Number getTotalPages() {
-    return totalPages;
-  }
+    public Integer getTotalCount() {
+      return totalCount;
+    }
 
-  public void setTotalPages(Number totalPages) {
-    this.totalPages = totalPages;
+    public Integer getTotalPages() {
+      return totalPages;
+    }
   }
 }

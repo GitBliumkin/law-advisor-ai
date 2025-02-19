@@ -1,81 +1,51 @@
 package com.shared.basecrud.dtos.responses;
 
-import com.shared.basecrud.dtos.BaseDto;
-import com.shared.models.enums.Services;
-import java.time.LocalDateTime;
+public class BaseResponse<T> {
+  protected boolean success;
+  protected String serviceName;
+  protected T payload;
+  protected Error error;
 
-public class BaseResponse extends BaseDto {
-
-  private LocalDateTime responseTimestamp;
-  private String status;
-  private Services serviceName;
-  private String message;
-  private String error;
-  private String uri;
-
-  public BaseResponse() {
-    this.responseTimestamp = LocalDateTime.now();
-  }
-
-  public void setErrorParameters(
-      String error, String message, Services serviceName, String uri, String status) {
-    this.status = status;
-    this.error = error;
-    this.message = message;
+  protected BaseResponse(String serviceName, boolean success, T payload, String errorMessage) {
+    this.success = success;
     this.serviceName = serviceName;
-    this.uri = uri;
+    this.payload = payload;
+    this.error = errorMessage != null ? new Error(errorMessage) : null;
   }
 
-  public BaseResponse(
-      Services serviceName, String error, String message, String status, String uri) {
-    this.status = status;
-    this.error = error;
-    this.message = message;
-    this.serviceName = serviceName;
-    this.uri = uri;
+  public static <T> BaseResponse<T> success(String serviceName, T payload) {
+    return new BaseResponse<>(serviceName, true, payload, null);
   }
 
-  public LocalDateTime getResponseTimestamp() {
-    return responseTimestamp;
+  public static <T> BaseResponse<T> error(String serviceName, String errorMessage) {
+    return new BaseResponse<>(serviceName, false, null, errorMessage);
   }
 
-  public String getStatus() {
-    return status;
+  public static class Error {
+    private final String errorMessage;
+
+    public Error(String errorMessage) {
+      this.errorMessage = errorMessage;
+    }
+
+    public String getErrorMessage() {
+      return errorMessage;
+    }
   }
 
-  public String setStatus(String status) {
-    return status;
+  public boolean isSuccess() {
+    return success;
   }
 
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public String getError() {
-    return error;
-  }
-
-  public void setError(String error) {
-    this.error = error;
-  }
-
-  public Services getServiceName() {
+  public String getServiceName() {
     return serviceName;
   }
 
-  public void setServiceName(Services serviceName) {
-    this.serviceName = serviceName;
+  public T getPayload() {
+    return payload;
   }
 
-  public String getUri() {
-    return this.uri;
-  }
-
-  public void setUri(String uri) {
-    this.uri = uri;
+  public Error getError() {
+    return error;
   }
 }

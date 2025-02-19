@@ -1,8 +1,6 @@
 package com.shared.basecrud.tables;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -12,33 +10,42 @@ import java.util.UUID;
 @MappedSuperclass
 public class BaseTable {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(nullable = false, updatable = false)
-  private UUID id;
+  @Column(columnDefinition = "UUID", nullable = false, updatable = false)
+  private String id;
 
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdOn;
 
-  @Column(nullable = false, updatable = false)
-  private UUID createdBy = new UUID(0L, 0L);
+  @Column(columnDefinition = "UUID", nullable = false, updatable = false)
+  private String createdBy = new UUID(0L, 0L).toString();
 
-  private LocalDateTime updatedOn;
-  private UUID updatedBy;
-  private LocalDateTime deletedOn;
-  private UUID deletedBy;
+  @Column private LocalDateTime updatedOn;
+
+  @Column(columnDefinition = "UUID")
+  private String updatedBy;
+
+  @Column private LocalDateTime deletedOn;
+
+  @Column(columnDefinition = "UUID")
+  private String deletedBy;
 
   @PrePersist
   public void prePersist() {
+    if (this.id == null) {
+      this.id = UUID.randomUUID().toString();
+    }
+
+    LocalDateTime currentTime = LocalDateTime.now();
     if (createdOn == null) {
-      createdOn = LocalDateTime.now();
+      createdOn = currentTime;
     }
   }
 
-  public UUID getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -50,11 +57,11 @@ public class BaseTable {
     this.createdOn = createdOn;
   }
 
-  public UUID getCreatedBy() {
+  public String getCreatedBy() {
     return createdBy;
   }
 
-  public void setCreatedBy(UUID createdBy) {
+  public void setCreatedBy(String createdBy) {
     this.createdBy = createdBy;
   }
 
@@ -66,11 +73,11 @@ public class BaseTable {
     this.updatedOn = updatedOn;
   }
 
-  public UUID getUpdatedBy() {
+  public String getUpdatedBy() {
     return updatedBy;
   }
 
-  public void setUpdatedBy(UUID updatedBy) {
+  public void setUpdatedBy(String updatedBy) {
     this.updatedBy = updatedBy;
   }
 
@@ -82,11 +89,11 @@ public class BaseTable {
     this.deletedOn = deletedOn;
   }
 
-  public UUID getDeletedBy() {
+  public String getDeletedBy() {
     return deletedBy;
   }
 
-  public void setDeletedBy(UUID deletedBy) {
+  public void setDeletedBy(String deletedBy) {
     this.deletedBy = deletedBy;
   }
 }

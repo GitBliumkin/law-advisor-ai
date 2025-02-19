@@ -1,28 +1,27 @@
 package com.shared.models.requests;
 
 import com.shared.basecrud.dtos.requests.BaseRequest;
-import java.util.UUID;
 
 public class CompanyProfileRequest extends BaseRequest {
-  private UUID id;
-  private String companyName;
+  private String id;
+  private String name;
   private String province;
   private String country;
 
-  public UUID getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(String id) {
     this.id = id;
   }
 
-  public String getCompanyName() {
-    return companyName;
+  public String getName() {
+    return name;
   }
 
-  public void setCompanyName(String companyName) {
-    this.companyName = companyName;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getProvince() {

@@ -1,80 +1,99 @@
 package com.shared.basecrud.handlers;
 
+import com.shared.basecrud.dtos.BaseDto;
 import com.shared.basecrud.dtos.requests.BaseRequest;
-import com.shared.basecrud.dtos.responses.BaseListResponse;
-import com.shared.basecrud.dtos.responses.BaseResponse;
 import com.shared.basecrud.repositories.BaseRepository;
 import com.shared.basecrud.tables.BaseTable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 public abstract class BaseHandlerService<
-    Request extends BaseRequest,
-    Response extends BaseResponse,
-    ListResponse extends BaseListResponse<Response>,
-    Table extends BaseTable> {
+    Request extends BaseRequest, Dto extends BaseDto, Table extends BaseTable> {
 
-  private final BaseRepository<Table> repository;
+  private final BaseRepository<Table, String> repository;
 
-  protected BaseHandlerService(BaseRepository<Table> repository) {
+  protected BaseHandlerService(BaseRepository<Table, String> repository) {
     this.repository = repository;
   }
 
   protected abstract Table converRequestToRow(Request request);
 
-  protected abstract Response convertRowToResponse(Table object);
+  protected abstract Dto convertRowToDto(Table object);
 
-  protected abstract ListResponse convertRowsToListResponse(
-      List<Table> rows, int size, int page, int totalCount, int totalPages);
+  protected Map<String, Object> convertRowsToDtos(
+      List<Table> rows, Integer size, Integer page, Integer totalCount, Integer totalPages) {
 
-  public abstract Response createErrorResponse(Exception error);
+    Map<String, Object> payloadMap = new HashMap<String, Object>();
+    List<Object> dtos = new ArrayList<>();
+    rows.forEach(row -> dtos.add(convertRowToDto(row)));
 
-  public abstract ListResponse createErrorListResponse(Exception error);
+    payloadMap.put("data", dtos);
+    payloadMap.put("size", size);
+    payloadMap.put("page", page);
+    payloadMap.put("totalCount", totalCount);
+    payloadMap.put("totalPages", totalPages);
+    return payloadMap;
+  }
+  ;
 
-  public ListResponse getAll(int size, int page) {
+  public Map<String, Object> getAll(int size, int page) {
+    List<Table> rows;
+    long totalCount;
+    int totalPages;
+    int currentPage;
+
     if (size == -1 || page == -1) {
-      List<Table> rows = repository.findAll();
-      return convertRowsToListResponse(rows, rows.size(), 1, rows.size(), 1);
+      rows = repository.findAllActive();
+      totalCount = rows.size();
+      totalPages = 1;
+      currentPage = 1;
+    } else {
+      Page<Table> pageResult = repository.findAllActive(PageRequest.of(page, size));
+
+      rows = pageResult.getContent();
+      totalCount = pageResult.getTotalElements();
+      totalPages = pageResult.getTotalPages();
+      currentPage = page;
     }
-    Page<Table> pageResult = repository.findAll(PageRequest.of(page, size));
 
-    List<Table> rows = pageResult.getContent();
-    long totalCount = pageResult.getTotalElements();
-    int totalPages = pageResult.getTotalPages();
-
-    return convertRowsToListResponse(rows, size, rows.size() / size, (int) totalCount, totalPages);
+    return convertRowsToDtos(rows, rows.size(), currentPage, (int) totalCount, totalPages);
   }
 
   // TODO Change to custom exception
-  public Response getById(String id) {
-    Optional<Table> objectOptional = repository.findById(id);
+  public Dto getById(String id) {
+    Optional<Table> objectOptional = repository.findByIdActive(id);
     Table objcet =
         objectOptional.orElseThrow(
             () -> new IllegalArgumentException("Object not found for ID: " + id));
-    return convertRowToResponse(objcet);
+    return convertRowToDto(objcet);
   }
 
-  public Response create(Request request) {
+  public Dto create(Request request) {
     Table newRow = converRequestToRow(request);
     Table savedRow = repository.save(newRow);
-    return convertRowToResponse(savedRow);
+    return convertRowToDto(savedRow);
   }
 
-  public Response update(Request request) {
+  public Dto update(Request request) {
     Table updatedRow = converRequestToRow(request);
     Table savedRow = repository.save(updatedRow);
-    return convertRowToResponse(savedRow);
+    return convertRowToDto(savedRow);
   }
 
-  public Response delete(String id) {
+  public void delete(String id) {
     Optional<Table> entityOptional = repository.findById(id);
-    Table entity =
+    Table object =
         entityOptional.orElseThrow(
             () -> new IllegalArgumentException("Object not found for ID: " + id));
-    repository.deleteById(id);
-    Response response = convertRowToResponse(entity);
-    return response;
+    object.setDeletedBy(new UUID(0L, 0L).toString());
+    object.setDeletedOn(LocalDateTime.now());
+    repository.save(object);
   }
 }

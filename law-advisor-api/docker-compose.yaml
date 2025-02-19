@@ -1,20 +1,14 @@
-version: '2.1'
+version: '3.8'
 
 services:
   postgres:
-    container_name: postgres_container
-    image: postgres:15
+    container_name: postgres
+    image: postgres:13
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: law_advisor_db
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-    restart: unless-stopped
-networks:
-  postgres:
-    driver: bridge
-
-volumes:
-  postgres:

@@ -1,21 +1,20 @@
 package com.shared.models.responses;
 
-import com.shared.basecrud.dtos.responses.BaseResponse;
-import java.util.UUID;
+import com.shared.basecrud.dtos.BaseDto;
 
-public class CompanyProfileResponse extends BaseResponse {
-  private UUID id;
+public class CompanyProfileDto extends BaseDto {
+  private String id;
   private String companyName;
   private String province;
   private String country;
 
-  public CompanyProfileResponse() {}
+  public CompanyProfileDto() {}
 
-  public UUID getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(String id) {
     this.id = id;
   }
 
