@@ -1,18 +1,14 @@
-services:
-  companies:
-    build:
-      context: ./companies
-      dockerfile: Dockerfile
-    container_name: companies_service
-    ports:
-      - "8081:8081"
+version: '3.8'
 
-  database:
-    image: postgres:15
-    container_name: postgres_container
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:13
     environment:
-      POSTGRES_USER: shared_user
-      POSTGRES_PASSWORD: shared_password
-      POSTGRES_DB: shared_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: law_advisor_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"

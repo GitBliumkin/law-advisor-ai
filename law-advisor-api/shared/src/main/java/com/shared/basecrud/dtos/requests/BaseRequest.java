@@ -1,20 +1,5 @@
 package com.shared.basecrud.dtos.requests;
 
-import java.time.LocalDateTime;
+import com.shared.basecrud.dtos.BaseDto;
 
-public abstract class BaseRequest {
-
-    private LocalDateTime requestTimestamp;
-
-    public BaseRequest() {
-        this.requestTimestamp = LocalDateTime.now();
-    }
-
-    public LocalDateTime getRequestTimestamp() {
-        return requestTimestamp;
-    }
-
-    public void setRequestTimestamp(LocalDateTime requestTimestamp) {
-        this.requestTimestamp = requestTimestamp;
-    }
-}
+public abstract class BaseRequest extends BaseDto {}

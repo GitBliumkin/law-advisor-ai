@@ -5,10 +5,15 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy your Java API JAR file into the container
-COPY target/law-advisor-api.jar app.jar
+COPY target/*.jar app.jar
 
 # Expose the application port
 EXPOSE 8080
+
+# Set environment variables for PostgreSQL
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/law_advisor_db
+ENV SPRING_DATASOURCE_USERNAME=user
+ENV SPRING_DATASOURCE_PASSWORD=password
 
 # Command to run the Java application
 CMD ["java", "-jar", "app.jar"]

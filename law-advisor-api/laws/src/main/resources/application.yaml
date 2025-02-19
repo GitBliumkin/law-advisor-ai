@@ -1,0 +1,21 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: laws-service
+  datasource:
+    url: jdbc:postgresql://database:5432/laws_db
+    username: laws_user
+    password: laws_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: dev
+
+logging:
+  level:
+    org.springframework: INFO

@@ -1,99 +1,98 @@
 package com.shared.basecrud.controllers;
 
+import com.shared.basecrud.dtos.BaseDto;
+import com.shared.basecrud.dtos.requests.BaseRequest;
+import com.shared.basecrud.dtos.responses.BaseListResponse;
+import com.shared.basecrud.dtos.responses.BaseResponse;
+import com.shared.basecrud.handlers.BaseHandlerService;
+import com.shared.basecrud.tables.BaseTable;
 import java.util.List;
-
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.shared.basecrud.dtos.requests.BaseRequest;
-import com.shared.basecrud.dtos.responses.BaseErrorResponse;
-import com.shared.basecrud.dtos.responses.BaseResponse;
-import com.shared.basecrud.dtos.tables.BaseTableRowDto;
-import com.shared.basecrud.handlers.BaseHandlerService;
+public abstract class BaseController<
+    Request extends BaseRequest, Dto extends BaseDto, Table extends BaseTable> {
 
-public abstract class BaseController<Request extends BaseRequest, Response extends BaseResponse, TableRow extends BaseTableRowDto, Handler extends BaseHandlerService<TableRow>> {
+  private String serviceName;
+  private static Logger logger;
+  protected final BaseHandlerService<Request, Dto, Table> handler;
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
+  protected BaseController(Class serivce, BaseHandlerService<Request, Dto, Table> handler) {
+    this.logger = LoggerFactory.getLogger(serivce);
+    this.serviceName = serivce.getCanonicalName();
+    this.handler = handler;
+  }
 
-    protected abstract TableRow convertRequestToTableRow(Request request);
-
-    protected abstract Response convertTableRowToResponse(TableRow row);
-
-    protected abstract List<Response> convertTableRowToListResponse(List<TableRow> rows);
-
-    protected final Handler handler;
-
-    protected BaseController(Handler handler) {
-        this.handler = handler;
+  @GetMapping
+  public BaseListResponse<Dto> getAll(
+      @RequestParam(required = false, defaultValue = "-1") int page,
+      @RequestParam(required = false, defaultValue = "-1") int size,
+      @RequestParam(required = false) String query) {
+    try {
+      Map<String, Object> data = this.handler.getAll(size, page);
+      return BaseListResponse.success(
+          this.serviceName,
+          (List<Dto>) data.get("data"),
+          (Integer) data.get("size"),
+          (Integer) data.get("page"),
+          (Integer) data.get("totalCount"),
+          (Integer) data.get("totalPages"));
+    } catch (Exception e) {
+      this.logger.error("Error caught in base get all", e);
+      return BaseListResponse.errorList(this.serviceName, e.getMessage());
     }
+  }
 
-    protected ResponseEntity<Object> handleError(Exception e, String path) {
-        logger.error("Error occurred: {}", e.getMessage(), e);
-        BaseErrorResponse errorResponse = new BaseErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                e.getMessage(),
-                path
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+  @GetMapping("/{id}")
+  public BaseResponse<Dto> getById(@PathVariable String id) {
+    try {
+      Dto dto = this.handler.getById(id);
+      return BaseResponse.success(this.serviceName, dto);
+    } catch (Exception e) {
+      this.logger.error("Error caught in base get", e);
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
+  }
 
-    @GetMapping
-    public ResponseEntity<Object> getAll() {
-        try {
-            List<TableRow> rows = this.handler.getAll();
-            return ResponseEntity.ok(convertTableRowToListResponse(rows));
-        } catch (Exception e) {
-            return handleError(e, "/");
-        }
+  @PostMapping
+  public BaseResponse<Dto> create(@RequestBody Request request) {
+    try {
+      Dto dto = this.handler.create(request);
+      return BaseResponse.success(this.serviceName, dto);
+    } catch (Exception e) {
+      this.logger.error("Error caught in base create", e);
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable String id) {
-        try {
-            TableRow row = this.handler.getById(id);
-            return ResponseEntity.ok(this.convertTableRowToResponse(row));
-        } catch (Exception e) {
-            return handleError(e, "/{id}");
-        }
+  @PutMapping
+  public BaseResponse<Dto> update(@RequestBody Request request) {
+    try {
+      Dto dto = this.handler.update(request);
+      return BaseResponse.success(this.serviceName, dto);
+    } catch (Exception e) {
+      this.logger.error("Error caught in base update", e);
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
+  }
 
-    @PostMapping
-    public ResponseEntity<Object> create(@RequestBody Request request) {
-        try {
-            TableRow newTableRow = this.convertRequestToTableRow(request);
-            TableRow createdRow = this.handler.create(newTableRow);
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.convertTableRowToResponse(createdRow));
-        } catch (Exception e) {
-            return handleError(e, "/");
-        }
-    }
+  @DeleteMapping("/{id}")
+  public BaseResponse<Dto> delete(@PathVariable String id) {
+    try {
+      this.handler.delete(id);
+      return BaseResponse.success(this.serviceName, dto);
+    } catch (Exception e) {
+      this.logger.error("Error caught in base delete", e);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable String id, @RequestBody Request request) {
-        try {
-            TableRow changedTableRow = this.convertRequestToTableRow(request);
-            TableRow updatedTableRow = this.handler.update(changedTableRow);
-            return ResponseEntity.ok(this.convertTableRowToResponse(updatedTableRow));
-        } catch (Exception e) {
-            return handleError(e, "/{id}");
-        }
+      return BaseResponse.error(this.serviceName, e.getMessage());
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable String id) {
-        try {
-            this.handler.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return handleError(e, "/{id}");
-        }
-    }
+  }
 }

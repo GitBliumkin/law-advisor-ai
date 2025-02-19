@@ -1,47 +1,24 @@
 package com.shared.basecrud.repositories;
 
+import com.shared.basecrud.tables.BaseTable;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.query.Param;
 
-import com.shared.basecrud.dtos.tables.BaseTableRowDto;
+@NoRepositoryBean
+public interface BaseRepository<Table extends BaseTable, ID> extends JpaRepository<Table, ID> {
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+  @Query("SELECT e FROM #{#entityName} e WHERE e.deletedOn IS NULL")
+  List<Table> findAllActive();
 
-public abstract class BaseRepository<TableRow extends BaseTableRowDto> {
+  @Query("SELECT e FROM #{#entityName} e WHERE e.deletedOn IS NULL")
+  Page<Table> findAllActive(Pageable pageable);
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private final Class<TableRow> tableClass;
-
-    protected BaseRepository(Class<TableRow> tableClass) {
-        this.tableClass = tableClass;
-    }
-
-    public List<TableRow> findAll() {
-        String query = "SELECT t FROM " + tableClass.getSimpleName() + " t";
-        TypedQuery<TableRow> typedQuery = entityManager.createQuery(query, tableClass);
-        return typedQuery.getResultList();
-    }
-
-    public TableRow findById(String id) {
-        return entityManager.find(tableClass, id);
-    }
-
-    public TableRow save(TableRow entity) {
-        entityManager.persist(entity);
-        return entity;
-    }
-
-    public TableRow update(TableRow entity) {
-        return entityManager.merge(entity);
-    }
-
-    public void delete(String id) {
-    	TableRow entity = findById(id);
-        if (entity != null) {
-            entityManager.remove(entity);
-        }
-    }
+  @Query("SELECT e FROM #{#entityName} e WHERE e.id = :id AND e.deletedOn IS NULL")
+  Optional<Table> findByIdActive(@Param("id") ID id);
 }
