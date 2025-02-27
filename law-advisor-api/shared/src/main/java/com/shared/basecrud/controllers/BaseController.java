@@ -88,7 +88,7 @@ public abstract class BaseController<
   public BaseResponse<Dto> delete(@PathVariable String id) {
     try {
       this.handler.delete(id);
-      return BaseResponse.success(this.serviceName, dto);
+      return BaseResponse.success(this.serviceName);
     } catch (Exception e) {
       this.logger.error("Error caught in base delete", e);
 

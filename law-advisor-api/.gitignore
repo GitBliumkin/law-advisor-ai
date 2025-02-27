@@ -1,0 +1,27 @@
+### Maven & Java ###
+target/
+!src/main/resources/
+!src/test/resources/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+dependency-reduced-pom.xml
+release.properties
+mvnw
+mvnw.cmd
+
+### Eclipse / IntelliJ ###
+.classpath
+.project
+.settings/
+
+### Logs ###
+logs/
+*.log
+*.out
+*.gz
+
+### Security Files ###
+*.env
+*.key
+*.pem

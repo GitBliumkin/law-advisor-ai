@@ -16,6 +16,10 @@ public class BaseResponse<T> {
   public static <T> BaseResponse<T> success(String serviceName, T payload) {
     return new BaseResponse<>(serviceName, true, payload, null);
   }
+  
+  public static <T> BaseResponse<T> success(String serviceName) {
+	    return new BaseResponse<>(serviceName, true, null, null);
+	  }
 
   public static <T> BaseResponse<T> error(String serviceName, String errorMessage) {
     return new BaseResponse<>(serviceName, false, null, errorMessage);
