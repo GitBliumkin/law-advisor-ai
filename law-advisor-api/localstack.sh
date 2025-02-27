@@ -32,9 +32,30 @@ check_postgres() {
 check_postgres
 
 # Manually run the initialization SQL script
-# Using 'psql' ensures that the SQL commands in init.sql are executed.
 log "Initializing databases..."
 docker exec -i postgres psql -U user -f /docker-entrypoint-initdb.d/init.sql
+
+# Function to check Kafka readiness
+check_kafka() {
+  log "Checking if Kafka is ready..."
+  until docker exec kafka kafka-topics --list --bootstrap-server localhost:9092 >/dev/null 2>&1; do
+    log "Waiting for Kafka to be ready..."
+    sleep 5
+  done
+  log "Kafka is ready!"
+}
+
+# Wait for Kafka to initialize and be ready
+check_kafka
+
+# Define Kafka topics
+TOPICS=("scraper_requests" "scraper_responses" "scraper_errors")
+
+# Create Kafka topics if they don't exist
+for topic in "${TOPICS[@]}"; do
+  log "Ensuring Kafka topic exists: $topic"
+  docker exec kafka kafka-topics --create --topic "$topic" --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 --if-not-exists
+done
 
 # Display running containers
 log "Checking container statuses..."
