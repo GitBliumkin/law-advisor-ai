@@ -1,0 +1,23 @@
+### Python ###
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+
+### Virtual Environment ###
+venv/
+.env/
+Pipfile
+Pipfile.lock
+
+### Logs ###
+logs/
+*.log
+*.out
+*.gz
+
+### Ignore Build Files ###
+build/
+dist/
+*.egg-info/

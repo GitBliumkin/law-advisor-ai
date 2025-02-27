@@ -1,0 +1,36 @@
+### General OS Files ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+### IDE & Editor Files ###
+.idea/
+.vscode/
+*.iml
+*.sublime-workspace
+
+### Logs ###
+logs/
+*.log
+*.out
+*.gz
+
+### Docker & Deployment ###
+docker-compose.override.yml
+docker-compose.yml
+localstack.sh
+.env
+*.pem
+*.key
+
+### Ignore Build Artifacts (Java & Python) ###
+target/
+bin/
+dist/
+*.class
+*.pyc
+*.pyo
+*.pyd
+__pycache__/

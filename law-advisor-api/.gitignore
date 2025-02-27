@@ -1,20 +1,4 @@
-### General ###
-# Ignore system-specific files
-.DS_Store
-Thumbs.db
-
-### Eclipse Specific ###
-.project
-.classpath
-.settings/
-target/
-bin/
-
-### IntelliJ Specific ###
-.idea/
-*.iml
-
-### Maven ###
+### Maven & Java ###
 target/
 !src/main/resources/
 !src/test/resources/
@@ -25,13 +9,11 @@ dependency-reduced-pom.xml
 release.properties
 mvnw
 mvnw.cmd
-*.log
 
-### Compiled Class Files ###
-*.class
-*.jar
-*.war
-*.ear
+### Eclipse / IntelliJ ###
+.classpath
+.project
+.settings/
 
 ### Logs ###
 logs/
@@ -39,28 +21,7 @@ logs/
 *.out
 *.gz
 
-### Docker ###
-docker-compose.override.yml
-docker-compose.yml
-localstack.sh
-
-### Database ###
-*.db
-*.sqlite
-*.sql
-*.pgsql
-data/
-db-dump/
-
-### Node & Frontend (if any) ###
-node_modules/
-dist/
-build/
-npm-debug.log
-yarn.lock
-package-lock.json
-
-### OS Files ###
-*.swp
-*.swo
-*~
+### Security Files ###
+*.env
+*.key
+*.pem
