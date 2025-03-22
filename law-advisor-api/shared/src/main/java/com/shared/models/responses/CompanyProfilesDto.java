@@ -2,13 +2,13 @@ package com.shared.models.responses;
 
 import com.shared.basecrud.dtos.BaseDto;
 
-public class CompanyProfileDto extends BaseDto {
+public class CompanyProfilesDto extends BaseDto {
   private String id;
   private String companyName;
   private String province;
   private String country;
 
-  public CompanyProfileDto() {}
+  public CompanyProfilesDto() {}
 
   public String getId() {
     return id;

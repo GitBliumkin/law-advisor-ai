@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "company_profiles")
-public class CompanyProfileTable extends BaseTable {
+public class CompanyProfilesTable extends BaseTable {
 
   @Column(nullable = false)
   private String name;

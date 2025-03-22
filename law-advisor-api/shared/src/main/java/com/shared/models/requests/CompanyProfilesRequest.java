@@ -2,7 +2,7 @@ package com.shared.models.requests;
 
 import com.shared.basecrud.dtos.requests.BaseRequest;
 
-public class CompanyProfileRequest extends BaseRequest {
+public class CompanyProfilesRequest extends BaseRequest {
   private String id;
   private String name;
   private String province;
