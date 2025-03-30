@@ -8,16 +8,17 @@ and sends the output to Kafka (`scraper-responses` topic).
 import os
 import sys
 import asyncio
+import aiokafka
 from pathlib import Path
 
 # Add the parent directory to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from legislative_crawler.kafka.kafka_consumer import KafkaConsumerService
-from legislative_crawler.kafka.kafka_producer import KafkaProducerService
-from legislative_crawler.config.crawl_config import KAFKA_SETTINGS
-from legislative_crawler.utils.helpers import logger
-from legislative_crawler.crowlers.crawler_router import CrawlerRouter
+from law_advisor_scrape.src.kafka.kafka_consumer import KafkaConsumerService
+from law_advisor_scrape.src.kafka.kafka_producer import KafkaProducerService
+from law_advisor_scrape.src.config.crawl_config import KAFKA_SETTINGS
+from law_advisor_scrape.src.utils.helpers import logger
+from law_advisor_scrape.src.crawlers.crawler_router import CrawlerRouter
 
 
 class ScraperLambda:

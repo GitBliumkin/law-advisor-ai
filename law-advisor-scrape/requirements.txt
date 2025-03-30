@@ -1,5 +1,0 @@
-scrapy==2.9.0
-scrapy-selenium==0.2.0
-selenium==4.11.2
-beautifulsoup4==4.12.2
-
