@@ -21,7 +21,7 @@ from legislative_crawler.utils.helpers import logger
 from legislative_crawler.crawlers.ontario_crawler import OntarioCrawler
 # Add other crawlers here as you implement them
 
-class CrawlerRouter:
+class ScraperLambda:
     """Routes province names to their respective crawler classes."""
 
     @staticmethod
