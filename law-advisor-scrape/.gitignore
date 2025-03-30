@@ -1,23 +1,51 @@
-### Python ###
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.env
+*.py[cod]
+*$py.class
 
-### Virtual Environment ###
+# Virtual environments (keep .env)
 venv/
-.env/
-Pipfile
-Pipfile.lock
+.venv/
+env/
 
-### Logs ###
-logs/
+# Crawl4AI output & checkpoints
+*.checkpoint
+*.sqlite3
+*.db
 *.log
-*.out
+*.pkl
+*.jsonl
+*.jl
+*.csv
 *.gz
 
-### Ignore Build Files ###
-build/
-dist/
-*.egg-info/
+# Crawl data
+data/
+output/
+logs/
+
+# Pytest cache
+.pytest_cache/
+
+# VSCode
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore credentials and keys
+*.key
+*.pem
+
+# Ignore coverage reports
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+.cache
+
+# Ignore compiled C extensions
+*.so

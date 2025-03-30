@@ -1,0 +1,50 @@
+[
+  {
+    "province": "FED",
+    "identifier": "FED_CLC",
+    "url": "https://laws-lois.justice.gc.ca/eng/acts/L-2/",
+    "law_name": "Canada Labour Code",
+    "last_updated": "2024-01-15",
+    "source": "Government of Canada"
+  },
+  {
+    "province": "FED",
+    "identifier": "FED_CHRA",
+    "url": "https://laws-lois.justice.gc.ca/eng/acts/h-6/",
+    "law_name": "Canadian Human Rights Act",
+    "last_updated": "2023-12-15",
+    "source": "Government of Canada"
+  },
+  {
+    "province": "ONT",
+    "identifier": "ONT_ESA",
+    "url": "https://www.ontario.ca/laws/statute/00e41",
+    "law_name": "Employment Standards Act",
+    "last_updated": "2023-12-01",
+    "source": "Ontario Government"
+  },
+  {
+    "province": "ONT",
+    "identifier": "ONT_OHSA",
+    "url": "https://www.ontario.ca/laws/statute/90o01",
+    "law_name": "Occupational Health and Safety Act",
+    "last_updated": "2023-11-15",
+    "source": "Ontario Government"
+  },
+  {
+    "province": "BC",
+    "identifier": "BC_ESA",
+    "url": "https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/00_96113_01",
+    "law_name": "Employment Standards Act",
+    "last_updated": "2023-10-01",
+    "source": "Government of British Columbia"
+  },
+  {
+    "province": "BC",
+    "identifier": "BC_WCA",
+    "url": "https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/19001_00",
+    "law_name": "Workers Compensation Act",
+    "last_updated": "2023-09-15",
+    "source": "Government of British Columbia"
+  }
+]
