@@ -12,13 +12,13 @@ import aiokafka
 from pathlib import Path
 
 # Add the parent directory to sys.path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
-from law_advisor_scrape.src.kafka.kafka_consumer import KafkaConsumerService
-from law_advisor_scrape.src.kafka.kafka_producer import KafkaProducerService
-from law_advisor_scrape.src.config.crawl_config import KAFKA_SETTINGS
-from law_advisor_scrape.src.utils.helpers import logger
-from law_advisor_scrape.src.crawlers.crawler_router import CrawlerRouter
+from src.kafka.kafka_consumer import KafkaConsumerService
+from src.kafka.kafka_producer import KafkaProducerService
+from src.config.crawl_config import KAFKA_SETTINGS
+from src.utils.helpers import logger
+from src.crawlers.crawler_router import CrawlerRouter
 
 
 class ScraperLambda:
@@ -59,7 +59,8 @@ async def kafka_listen_and_process():
     Start Kafka consumer to receive province names,
     run crawlers, and send results back via Kafka producer.
     """
-    consumer = KafkaConsumerService(topic="scraper-requests", group_id="scraper-group")
+    consumer = KafkaConsumerService(topic=KAFKA_SETTINGS["request_topic"],group_id=KAFKA_SETTINGS["group_id"])
+
     producer = KafkaProducerService(KAFKA_SETTINGS["bootstrap_servers"])
 
     await consumer.start()
@@ -69,11 +70,14 @@ async def kafka_listen_and_process():
         logger.info("Kafka Lambda is now listening...")
         while True:
             province = await consumer.consume_one()
+            if not isinstance(province, str) or not province.strip():
+                logger.warning(f"Skipping invalid or empty message: {province}")
+                return 
+
             logger.info(f"Received crawl request for province: {province}")
 
             result_json = await ScraperLambda.handle_province_crawl(province)
-
-            await producer.send("scraper-responses", result_json)
+            await producer.send(KAFKA_SETTINGS["response_topic"], result_json)
             logger.info(f"Result for {province} sent to scraper-responses")
     finally:
         await consumer.consumer.stop()

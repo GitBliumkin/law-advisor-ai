@@ -2,18 +2,28 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any
 
-from legislative_crawler.utils.helpers import logger
-from legislative_crawler.crawlers.ontario_crawler import OntarioCrawler
+from src.utils.helpers import logger
+from src.crawlers.ontario_crawler import OntarioCrawler
 
-LEGISLATION_JSON_PATH = Path(__file__).parent.parent / "data/legislation_index.json"
+LEGISLATION_JSON_PATH = Path(__file__).parent.parent / "resources/links.json"
 
 class CrawlerRouter:
     """Handles crawler selection, law loading, and single-law crawling."""
 
+    PROVINCE_ALIAS = {
+        "ontario": "ON",
+        "federal": "FED",
+        "british columbia": "BC",
+    }
+
+    @staticmethod
+    def normalize_province(province: str) -> str:
+        return CrawlerRouter.PROVINCE_ALIAS.get(province.lower(), province.upper())
+
     @staticmethod
     def get_crawler(province: str):
-        province = province.lower()
-        if province == "ontario":
+        province = CrawlerRouter.normalize_province(province)
+        if province == "ON":
             return OntarioCrawler()
         # Add more provinces here
         else:
@@ -21,6 +31,8 @@ class CrawlerRouter:
 
     @staticmethod
     def load_laws_for_province(province: str) -> List[Dict[str, Any]]:
+        province = CrawlerRouter.normalize_province(province)
+
         try:
             with open(LEGISLATION_JSON_PATH, "r", encoding="utf-8") as f:
                 all_laws = json.load(f)

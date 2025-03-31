@@ -1,213 +1,189 @@
-# Legislative Crawler
+# 🏛️ Law Advisor Scrapper
 
-A Python-based web-crawling system for extracting, structuring, and formatting legislative texts related to employment and labor regulations across Canada.
+A Python-based system for extracting, structuring, and formatting Canadian employment and labor legislation. Supports CLI, REST API, Kafka events, and asynchronous scraping.
 
-## Features
+---
 
-- Asynchronous crawling capabilities using Crawl4AI
-- Structured data output in JSON and Markdown
-- Command-Line Interface (CLI) for on-demand operations
-- REST API using FastAPI with Kafka integration for event-driven workflows
-- Docker deployment for easy containerization
+## 🚀 Features
 
-## Project Structure
+- ⚡ Asynchronous crawling with Crawl4AI
+- 📦 Structured output (JSON + Markdown)
+- 🖥️ CLI for law-by-law scraping
+- 🌐 REST API (FastAPI) with Kafka integration
+- 🐳 Docker-compatible
+- 🧪 Unit tested
+
+---
+
+## 📁 Project Structure
 
 ```
 legislative_crawler/
-├── links.json              # Dynamic list of URLs
-├── main.py                 # Central coordinator for crawling tasks
-├── config/
-│   ├── __init__.py
-│   └── crawl_config.py     # Central configuration logic
-├── crawlers/
-│   ├── __init__.py
-│   ├── fed.py              # Federal law-specific scaffolding
-│   ├── on.py               # Ontario law-specific scaffolding
-│   ├── bc.py               # BC law-specific scaffolding
-├── api/
-│   ├── __init__.py
-│   └── endpoints.py        # FastAPI endpoints & Kafka integration
-├── cli/
-│   ├── __init__.py
-│   └── interface.py        # CLI command-handling
-├── utils/
-│   ├── __init__.py
-│   └── helpers.py          # Logging, error handling, common utilities
-├── tests/
-│   ├── __init__.py
-│   ├── test_crawl.py       # Unit tests for crawling
-│   ├── test_api.py         # Unit tests for API endpoints
-│   └── test_cli.py         # Unit tests for CLI
-├── Dockerfile              # Docker container setup
-├── requirements.txt        # Python dependencies
-└── README.md               # Documentation
+├── cli/                  # CLI interface
+├── api/                  # FastAPI endpoints
+├── crawlers/             # Province-specific crawlers
+├── kafka/                # Kafka consumer & producer
+├── config/               # App + Kafka configuration
+├── resources/            # links.json with legislation metadata
+├── utils/                # Logging, helpers
+├── tests/                # Unit tests
+├── scraper_lambda.py     # Kafka Lambda entrypoint
+├── requirements.txt      # All dependencies
+├── Dockerfile
+└── README.md
 ```
 
-## Installation
+---
 
-### Prerequisites
+## 🧰 Installation
 
-- Python 3.10 or higher
-- pip (Python package manager)
-- Docker (optional, for containerized deployment)
-- Kafka (optional, for event-driven workflows)
+### ✅ Prerequisites
 
-### Local Installation
+- Python 3.10+
+- Kafka (locally or via Docker)
+- Docker (optional)
+- Git
 
-1. Clone the repository:
+### 🧱 Local Setup
 
 ```bash
 git clone https://github.com/yourusername/legislative-crawler.git
 cd legislative-crawler
-```
 
-2. Create a virtual environment:
-
-```bash
+# Create and activate virtual env
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install Playwright browsers
+python -m playwright install
 ```
 
-3. Install dependencies:
+---
 
-```bash
-pip install -r legislative_crawler/requirements.txt
-```
+## 🔄 Usage
 
-## Usage
-
-### Command-Line Interface (CLI)
-
-The CLI allows you to crawl a specific law or all laws for a province:
+### 🖥 CLI Mode
 
 ```bash
 # Crawl a specific law
-python -m legislative_crawler.main FED_CLC --output-json fed_clc.json --output-md fed_clc.md
+python -m legislative_crawler.main FED_CLC
 
-# Crawl all laws for a province
-python -m legislative_crawler.main FED --output-json fed.json --output-md fed.md
+# Crawl all laws in a province
+python -m legislative_crawler.main ON
 ```
 
-### API Server
-
-Start the API server:
+### 🌐 API Mode
 
 ```bash
 python -m legislative_crawler.main api
 ```
 
-The API will be available at http://localhost:8000.
+API available at: `http://localhost:8000`
 
-#### API Endpoints
+#### Endpoints
 
-- `POST /crawl`: Start a crawling task
-  - Request body: `{"identifier": "FED_CLC"}`
-  - Response: `{"task_id": "...", "status": "pending", "message": "..."}`
+- `POST /crawl` → Start crawl
+- `GET /crawl/{task_id}` → Get crawl status
+- `GET /health` → Check if API is alive
 
-- `GET /crawl/{task_id}`: Get task status
-  - Response: `{"task_id": "...", "status": "...", "message": "..."}`
+---
 
-- `GET /health`: Health check
-  - Response: `{"status": "healthy"}`
+## ⚙️ Kafka Lambda Scraper
 
-### Docker Deployment
-
-1. Build the Docker image:
+Start a Kafka-based listener that reacts to province names and returns crawl results:
 
 ```bash
-docker build -t legislative-crawler -f legislative_crawler/Dockerfile legislative_crawler
+python scraper_lambda.py
 ```
 
-2. Run the container:
+**Send province names** (e.g., `ontario`, `ON`, `fed`) to topic: `scraper-requests`.
+
+**Responses** are sent to topic: `scraper-responses`.
+
+---
+
+## 🐋 Docker Setup
 
 ```bash
-# Run the API server
+docker build -t legislative-crawler .
 docker run -p 8000:8000 legislative-crawler
-
-# Run the CLI
-docker run --rm legislative-crawler python -m legislative_crawler.main FED --output-json /app/output/fed.json --output-md /app/output/fed.md
 ```
 
-## Configuration
+---
 
-The application can be configured using environment variables:
+## ⚙️ Configuration
 
-- `LINKS_FILE`: Path to the links.json file
-- `OUTPUT_DIR`: Path to the output directory
-- `MAX_RETRIES`: Maximum number of retries for failed requests
-- `TIMEOUT`: Request timeout in seconds
-- `CONCURRENT_REQUESTS`: Maximum number of concurrent requests
-- `USER_AGENT`: User agent string for HTTP requests
-- `API_HOST`: API server host
-- `API_PORT`: API server port
-- `API_WORKERS`: Number of API server workers
-- `API_RELOAD`: Enable/disable auto-reload for the API server
-- `KAFKA_BOOTSTRAP_SERVERS`: Kafka bootstrap servers
-- `KAFKA_TOPIC`: Kafka topic
-- `KAFKA_GROUP_ID`: Kafka consumer group ID
+Available via environment variables:
 
-## URL Structure
+| Variable | Purpose |
+|----------|---------|
+| `KAFKA_BOOTSTRAP_SERVERS` | e.g. `localhost:9092` |
+| `KAFKA_REQUEST_TOPIC`     | Kafka input topic |
+| `KAFKA_RESPONSE_TOPIC`    | Kafka output topic |
+| `KAFKA_CONSUMER_GROUP`    | Kafka group ID |
+| `LINKS_FILE`              | Path to links.json |
+| `API_HOST`, `API_PORT`, `API_RELOAD` | FastAPI settings |
 
-The application uses a list-based JSON file (`links.json`) to store URLs and metadata:
+---
 
-```json
-[
-  {
-    "province": "FED",
-    "identifier": "FED_CLC",
-    "url": "https://laws-lois.justice.gc.ca/eng/acts/L-2/",
-    "law_name": "Canada Labour Code",
-    "last_updated": "2024-01-15",
-    "source": "Government of Canada"
-  },
-  ...
-]
+## 🧪 Testing
+
+```bash
+pytest tests/
 ```
 
-## Output Format
+---
 
-### JSON Output
+## ➕ Add New Province
+
+1. Add alias in `CrawlerRouter.PROVINCE_ALIAS`
+2. Implement a crawler in `crawlers/{province}.py`
+3. Add laws to `resources/links.json`
+
+---
+
+## 📄 Output Format
+
+### JSON
 
 ```json
 {
-  "url_identifier": "FED_CLC",
-  "url": "https://laws-lois.justice.gc.ca/eng/acts/L-2/",
-  "law_name": "Canada Labour Code",
-  "scrape_date": "DD/MM/YYYY",
-  "scrape_time": "HH:MM",
+  "province": "ON",
   "status": "success",
-  "markdown": "<actual markdown content>"
+  "pages": [
+    {
+      "identifier": "ON_ESA",
+      "markdown": "...",
+      "status": "success"
+    }
+  ]
 }
 ```
 
-### Markdown Output
+### Markdown
 
-The Markdown output contains the structured content of the law, formatted for easy reading and ingestion by LLMs or vector databases.
+Markdown is extracted, pruned, and formatted per law page.
 
-## Error Handling and Troubleshooting
+---
 
-The application uses a centralized logging system to track errors and provide debugging information. Logs are output to the console by default.
+## 🧹 Troubleshooting
 
-Common issues:
+| Problem | Solution |
+|--------|----------|
+| `BrowserType.launch` error | Run `python -m playwright install` |
+| Kafka group error | Ensure Kafka is running locally |
+| Province not found | Normalize to uppercase / alias format |
+| Empty responses | Check `links.json` and topic messages |
 
-- **Connection errors**: Check your internet connection and the URL in links.json
-- **Kafka connection errors**: Ensure Kafka is running and accessible
-- **Permission errors**: Check file permissions for output files
+---
 
-## Development
+## 📜 License
 
-### Running Tests
+MIT License – see `LICENSE` file.
 
-```bash
-pytest legislative_crawler/tests/
-```
+---
 
-### Adding a New Province
-
-1. Add the province to `PROVINCE_SETTINGS` in `config/crawl_config.py`
-2. Create a new crawler file in `crawlers/`
-3. Add URLs to `links.json`
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+Let me know if you want a `.env` file template or Docker Compose setup included!

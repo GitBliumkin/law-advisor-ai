@@ -19,17 +19,17 @@
     ]
   },
   {
-    "province": "ONT",
+    "province": "ON",
     "pages": [
       {
-        "identifier": "ONT_ESA",
+        "identifier": "ON_ESA",
         "url": "https://www.ontario.ca/laws/statute/00e41",
         "law_name": "Employment Standards Act",
         "last_updated": "2023-12-01",
         "source": "Ontario Government"
       },
       {
-        "identifier": "ONT_OHSA",
+        "identifier": "ON_OHSA",
         "url": "https://www.ontario.ca/laws/statute/90o01",
         "law_name": "Occupational Health and Safety Act",
         "last_updated": "2023-11-15",
