@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Any
 BASE_DIR = Path(__file__).parent.parent.absolute()
 
 # Links file path
-LINKS_FILE = os.environ.get("LINKS_FILE", str(BASE_DIR / "links.json"))
+LINKS_FILE = Path(__file__).parent.parent / "resources/links.json"
 
 # Output directory
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", str(BASE_DIR / "output"))
@@ -36,8 +36,9 @@ API_SETTINGS = {
 # Kafka settings
 KAFKA_SETTINGS = {
     "bootstrap_servers": os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
-    "topic": os.environ.get("KAFKA_TOPIC", "legislative_crawler"),
-    "group_id": os.environ.get("KAFKA_GROUP_ID", "legislative_crawler_group"),
+    "request_topic": os.environ.get("KAFKA_REQUEST_TOPIC", "scraper-requests"),
+    "response_topic": os.environ.get("KAFKA_RESPONSE_TOPIC", "scraper-responses"),
+    "group_id": os.getenv("KAFKA_CONSUMER_GROUP", "scraper-group")
 }
 
 # Province-specific settings
