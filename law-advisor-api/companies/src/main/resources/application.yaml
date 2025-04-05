@@ -13,6 +13,9 @@ spring:
 
 server:
   port: 8081
+  
+mock-data:
+  path: src/test/resources/mock-data
 
 logging:
   level:

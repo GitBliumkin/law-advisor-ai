@@ -4,7 +4,7 @@ import com.shared.basecrud.dtos.BaseDto;
 import com.shared.basecrud.dtos.requests.BaseRequest;
 import com.shared.basecrud.dtos.responses.BaseListResponse;
 import com.shared.basecrud.dtos.responses.BaseResponse;
-import com.shared.basecrud.handlers.BaseHandlerService;
+import com.shared.basecrud.handlers.BaseHandler;
 import com.shared.basecrud.tables.BaseTable;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +23,9 @@ public abstract class BaseController<
 
   private String serviceName;
   private static Logger logger;
-  protected final BaseHandlerService<Request, Dto, Table> handler;
+  protected final BaseHandler<Request, Dto, Table> handler;
 
-  protected BaseController(Class serivce, BaseHandlerService<Request, Dto, Table> handler) {
+  protected BaseController(Class serivce, BaseHandler<Request, Dto, Table> handler) {
     this.logger = LoggerFactory.getLogger(serivce);
     this.serviceName = serivce.getCanonicalName();
     this.handler = handler;
@@ -65,7 +65,7 @@ public abstract class BaseController<
   @PostMapping
   public BaseResponse<Dto> create(@RequestBody Request request) {
     try {
-      Dto dto = this.handler.create(request);
+      Dto dto = this.handler.save(request);
       return BaseResponse.success(this.serviceName, dto);
     } catch (Exception e) {
       this.logger.error("Error caught in base create", e);
@@ -76,7 +76,7 @@ public abstract class BaseController<
   @PutMapping
   public BaseResponse<Dto> update(@RequestBody Request request) {
     try {
-      Dto dto = this.handler.update(request);
+      Dto dto = this.handler.save(request);
       return BaseResponse.success(this.serviceName, dto);
     } catch (Exception e) {
       this.logger.error("Error caught in base update", e);
@@ -87,7 +87,7 @@ public abstract class BaseController<
   @DeleteMapping("/{id}")
   public BaseResponse<Dto> delete(@PathVariable String id) {
     try {
-      this.handler.delete(id);
+      this.handler.softDelete(id);
       return BaseResponse.success(this.serviceName);
     } catch (Exception e) {
       this.logger.error("Error caught in base delete", e);
