@@ -1,10 +1,10 @@
-package com.shared.models.responses;
+package com.shared.models.dtos;
 
 import com.shared.basecrud.dtos.BaseDto;
 
 public class CompanyProfileDto extends BaseDto {
   private String id;
-  private String companyName;
+  private String name;
   private String province;
   private String country;
 
@@ -18,12 +18,12 @@ public class CompanyProfileDto extends BaseDto {
     this.id = id;
   }
 
-  public String getCompanyName() {
-    return companyName;
+  public String getName() {
+    return name;
   }
 
-  public void setCompanyName(String companyName) {
-    this.companyName = companyName;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getProvince() {

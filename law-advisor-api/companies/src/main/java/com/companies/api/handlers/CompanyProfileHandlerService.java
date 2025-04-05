@@ -3,8 +3,9 @@ package com.companies.api.handlers;
 import com.companies.api.repositories.CompanyProfileRepository;
 import com.companies.api.tables.CompanyProfileTable;
 import com.shared.basecrud.handlers.BaseHandlerService;
+import com.shared.models.dtos.CompanyProfileDto;
 import com.shared.models.requests.CompanyProfileRequest;
-import com.shared.models.responses.CompanyProfileDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class CompanyProfileHandlerService
   protected CompanyProfileDto convertRowToDto(CompanyProfileTable row) {
     CompanyProfileDto dto = new CompanyProfileDto();
     dto.setId(row.getId());
-    dto.setCompanyName(row.getName());
+    dto.setName(row.getName());
     dto.setProvince(row.getProvince());
     dto.setCountry(row.getCountry());
     return dto;
