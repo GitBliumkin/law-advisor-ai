@@ -10,19 +10,8 @@ LEGISLATION_JSON_PATH = Path(__file__).parent.parent / "resources/links.json"
 class CrawlerRouter:
     """Handles crawler selection, law loading, and single-law crawling."""
 
-    PROVINCE_ALIAS = {
-        "ontario": "ON",
-        "federal": "FED",
-        "british columbia": "BC",
-    }
-
-    @staticmethod
-    def normalize_province(province: str) -> str:
-        return CrawlerRouter.PROVINCE_ALIAS.get(province.lower(), province.upper())
-
     @staticmethod
     def get_crawler(province: str):
-        province = CrawlerRouter.normalize_province(province)
         if province == "ON":
             return OntarioCrawler()
         # Add more provinces here
@@ -30,8 +19,7 @@ class CrawlerRouter:
             raise ValueError(f"No crawler implemented for province: {province}")
 
     @staticmethod
-    def load_laws_for_province(province: str) -> List[Dict[str, Any]]:
-        province = CrawlerRouter.normalize_province(province)
+    def load_laws_for_province(province: str, identifire: str) -> List[Dict[str, Any]]:
 
         try:
             with open(LEGISLATION_JSON_PATH, "r", encoding="utf-8") as f:
@@ -53,17 +41,4 @@ class CrawlerRouter:
 
     @staticmethod
     async def crawl_law(crawler, law: Dict[str, Any]) -> Dict[str, Any]:
-        try:
-            crawl_result = await crawler.crawl(law["url"])
-            return {
-                **law,
-                "status": "success",
-                "markdown": crawl_result
-            }
-        except Exception as e:
-            logger.warning(f"Failed to crawl {law['identifier']}: {e}")
-            return {
-                **law,
-                "status": "error",
-                "error": str(e)
-            }
+        return await crawler.crawl(law["url"])

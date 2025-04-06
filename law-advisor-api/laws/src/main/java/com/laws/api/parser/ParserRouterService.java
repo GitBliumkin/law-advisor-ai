@@ -3,6 +3,7 @@ package com.laws.api.parser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.laws.api.parser.ontario.OntarioParserService;
 import com.shared.models.dtos.ScraperDto;
 import com.shared.models.enums.SupportedRegions;
 

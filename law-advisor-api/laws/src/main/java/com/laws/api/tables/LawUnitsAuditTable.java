@@ -22,12 +22,6 @@ public class LawUnitsAuditTable extends BaseTable {
     @ManyToOne
     @JoinColumn(name = "parentId", referencedColumnName = "id")
     private LawUnitsAuditTable parent;
-
-	@Column(nullable = false)
-	private String lawId;
-	
-	@Column(nullable = false)
-	private String parentId ;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -44,22 +38,6 @@ public class LawUnitsAuditTable extends BaseTable {
 	
 	@Column(name = "`order`", nullable = false)
 	private Integer order;
-
-	public String getLawId() {
-		return lawId;
-	}
-
-	public void setLawId(String lawId) {
-		this.lawId = lawId;
-	}
-
-	public String getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
 
 	public UnitType getUnitType() {
 		return unitType;

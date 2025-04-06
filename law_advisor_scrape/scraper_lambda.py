@@ -24,8 +24,45 @@ from src.crawlers.crawler_router import CrawlerRouter
 class ScraperLambda:
     """Main crawling handler using routing logic from CrawlerRouter."""
 
+
+async def kafka_listen_and_process():
+    """
+    Start Kafka consumer to receive province names,
+    run crawlers, and send results back via Kafka producer.
+    """
+    consumer = KafkaConsumerService(topic=KAFKA_SETTINGS["request_topic"],group_id=KAFKA_SETTINGS["group_id"])
+
+    producer = KafkaProducerService(KAFKA_SETTINGS["bootstrap_servers"])
+
+    await consumer.start()
+    await producer.start()
+
+    try:
+        logger.info("Kafka Lambda is now listening...")
+        while True:
+            message = await consumer.consume_one()
+            province = message["province"]
+            identifier = message["identifier"]
+
+            if not isinstance(province, str) or not province.strip():
+                logger.warning(f"Skipping invalid or empty message: {province}")
+                return
+            
+            if not isinstance(identifier, str) or not identifier.strip():
+                logger.warning(f"Skipping invalid or empty message: {identifier}")
+                return
+
+            logger.info(f"Received crawl request for province: {province}, with identifier: {identifier}")
+
+            result_json = await ScraperLambda.handle_province_crawl(province)
+            await producer.send(KAFKA_SETTINGS["response_topic"], result_json)
+            logger.info(f"Result for {province} sent to scraper-responses")
+    finally:
+        await consumer.consumer.stop()
+        await producer.stop()
+
     @classmethod
-    async def handle_province_crawl(cls, province: str) -> dict:
+    async def handle_province_crawl(cls, province: str, identifier: str) -> dict:
         """
         Crawl all laws for a province and return results.
         """
@@ -52,36 +89,6 @@ class ScraperLambda:
                 "status": "error",
                 "message": str(e)
             }
-
-
-async def kafka_listen_and_process():
-    """
-    Start Kafka consumer to receive province names,
-    run crawlers, and send results back via Kafka producer.
-    """
-    consumer = KafkaConsumerService(topic=KAFKA_SETTINGS["request_topic"],group_id=KAFKA_SETTINGS["group_id"])
-
-    producer = KafkaProducerService(KAFKA_SETTINGS["bootstrap_servers"])
-
-    await consumer.start()
-    await producer.start()
-
-    try:
-        logger.info("Kafka Lambda is now listening...")
-        while True:
-            province = await consumer.consume_one()
-            if not isinstance(province, str) or not province.strip():
-                logger.warning(f"Skipping invalid or empty message: {province}")
-                return 
-
-            logger.info(f"Received crawl request for province: {province}")
-
-            result_json = await ScraperLambda.handle_province_crawl(province)
-            await producer.send(KAFKA_SETTINGS["response_topic"], result_json)
-            logger.info(f"Result for {province} sent to scraper-responses")
-    finally:
-        await consumer.consumer.stop()
-        await producer.stop()
 
 
 if __name__ == "__main__":
