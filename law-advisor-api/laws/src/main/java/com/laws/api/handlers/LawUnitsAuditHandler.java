@@ -22,9 +22,7 @@ public class LawUnitsAuditHandler
 	  protected LawUnitsAuditTable converRequestToRow(LawUnitsAuditRequest request) {
 	    LawUnitsAuditTable row = new LawUnitsAuditTable();
 	    row.setId(request.getId());
-	    row.setLawId(request.getLawId());
 	    row.setOrder(request.getOrder());
-	    row.setParentId(request.getParentId());
 	    row.setTitle(request.getTitle());
 	    row.setUnitLabel(request.getUnitLabel());
 	    row.setUnitType(request.getUnitType());
@@ -35,9 +33,7 @@ public class LawUnitsAuditHandler
 	  protected LawUnitsAuditDto convertRowToDto(LawUnitsAuditTable row) {
 	    LawUnitsAuditDto dto = new LawUnitsAuditDto();
 	    dto.setId(row.getId());
-	    dto.setLawId(row.getLawId());
 	    dto.setOrder(row.getOrder());
-	    dto.setParentId(row.getParentId());
 	    dto.setTitle(row.getTitle());
 	    dto.setUnitLabel(row.getUnitLabel());
 	    dto.setUnitType(row.getUnitType());

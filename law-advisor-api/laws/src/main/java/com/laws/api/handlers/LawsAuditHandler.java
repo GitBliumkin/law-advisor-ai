@@ -1,6 +1,7 @@
 package com.laws.api.handlers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.laws.api.repositories.LawsAuditRepository;
 import com.laws.api.tables.LawsAuditTable;
@@ -8,6 +9,7 @@ import com.shared.basecrud.handlers.BaseHandlerService;
 import com.shared.models.dtos.LawsAuditDto;
 import com.shared.models.requests.LawsAuditRequest;
 
+@Service
 public class LawsAuditHandler extends BaseHandlerService<LawsAuditRequest, LawsAuditDto, LawsAuditTable> {
 	
 	  @Autowired
