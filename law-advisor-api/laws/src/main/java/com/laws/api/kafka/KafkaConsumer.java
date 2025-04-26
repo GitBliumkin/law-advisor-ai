@@ -21,7 +21,7 @@ public class KafkaConsumer implements BaseKafkaConsumer {
 	private ParserRouterService routerService;
 	
 	@Override
-	@KafkaListener(topics = "scraper_responses", groupId = "scraper-group")
+	@KafkaListener(topics = "scraper_responses", groupId = "scraper-response-group")
 	public void consumeMessage(String topic, @Payload String message) {
 		 try {
 	            ObjectMapper mapper = new ObjectMapper();
