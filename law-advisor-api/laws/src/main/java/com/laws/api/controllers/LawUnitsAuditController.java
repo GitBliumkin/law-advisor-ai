@@ -59,7 +59,7 @@ public class LawUnitsAuditController extends BaseController<LawUnitsAuditRequest
 	        );
 	    }
 	    
-	    @DeleteMapping("/{id}")
+	    @DeleteMapping("/delete-vector/{id}")
 	    public Mono<String> deleteVector(@PathVariable Integer id) {
 	        return qdrantService.deleteVector("my_vectors", id);
 	    }
