@@ -1,0 +1,15 @@
+# Core
+crawl4ai>=0.7.2
+playwright>=1.46
+langchain==0.2.0
+langchain-openai>=0.1.7
+langchain-community>=0.2.0
+llama-index==0.10.19
+# (0.10.19 uses the same import path `llama_index.core.*`; if you prefer 0.11.x it also works,
+# but keep the import path exactly as `llama_index.core`.)
+qdrant-client==1.8.0
+openai>=1.15.0
+python-dotenv>=1.0.1
+rich>=13.0.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0 
