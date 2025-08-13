@@ -10,10 +10,12 @@ RAW_DIR = DATA_DIR / "raw"
 OUTPUT_DIR = DATA_DIR / "outputs"
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # Crawler
 # Default to CanLII ESA 2000 page
 START_URL = "https://www.canlii.org/en/on/laws/stat/so-2000-c-41/latest/so-2000-c-41.html"
+HEADLESS = os.getenv("HEADLESS", "true").lower() == "true"
 USER_AGENT = os.getenv("USER_AGENT", "HR-Compliance-Bot/1.0")
 CONCURRENCY = int(os.getenv("CRAWL_CONCURRENCY", 4))
 
