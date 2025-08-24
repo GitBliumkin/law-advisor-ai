@@ -40,7 +40,7 @@ class OntarioCrawler:
             verbose=True
         )
 
-    async def crawl(self, url: str) -> dict:
+    async def crawl(self, url: str, identifire: str, lawName: str) -> dict:
         """
         Run the crawler and return markdown output as a dictionary.
         """
@@ -51,11 +51,11 @@ class OntarioCrawler:
                 md_obj = result.markdown  # MarkdownGenerationResult
 
                 output = {
-                    "url": result.url,
-                    "raw_markdown": md_obj.raw_markdown,
-                    "fit_markdown": md_obj.fit_markdown,
-                    "references": md_obj.references_markdown,
-                    "with_citations": md_obj.markdown_with_citations
+                    "identifire": identifire,
+                    "lawName": lawName,
+                    "url": url,
+                    "pageContent": md_obj.fit_markdown,
+                    "scrapeTime": datetime.utcnow().isoformat()
                 }
 
                 return output

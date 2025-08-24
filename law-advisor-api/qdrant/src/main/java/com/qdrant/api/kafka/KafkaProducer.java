@@ -1,4 +1,4 @@
-package com.laws.api.kafka;
+package com.qdrant.api.kafka;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

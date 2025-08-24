@@ -38,7 +38,7 @@ KAFKA_SETTINGS = {
     "bootstrap_servers": os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
     "request_topic": os.environ.get("KAFKA_REQUEST_TOPIC", "scraper-requests"),
     "response_topic": os.environ.get("KAFKA_RESPONSE_TOPIC", "scraper-responses"),
-    "group_id": os.getenv("KAFKA_CONSUMER_GROUP", "scraper-group")
+    "group_id": os.getenv("KAFKA_CONSUMER_GROUP", "scraper-request-group")
 }
 
 # Province-specific settings
