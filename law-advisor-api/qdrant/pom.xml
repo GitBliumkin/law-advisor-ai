@@ -8,18 +8,19 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>laws</artifactId>
+    <artifactId>qdrant</artifactId>
     <packaging>jar</packaging>
-    <name>Laws</name>
+    <name>Qdrant</name>
 
     <dependencies>
-        <!-- Spring Boot Starter Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!-- Shared Module Dependency -->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.lawadvisor</groupId>
             <artifactId>shared</artifactId>
@@ -37,19 +38,24 @@
             </exclusions>
         </dependency>
         <dependency>
-		    <groupId>org.postgresql</groupId>
-		    <artifactId>postgresql</artifactId>
-		    <version>42.6.0</version>
-		</dependency>
-		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 	    <dependency>
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
-		    <version>1.18.30</version>
+		    <version>1.18.30</version> 
 		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.kafka</groupId>
+		    <artifactId>spring-kafka</artifactId>
+		    <version>3.0.9</version>
+		</dependency>
+        <dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.6.0</version>
 		</dependency>
     </dependencies>
 
