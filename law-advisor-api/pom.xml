@@ -9,8 +9,9 @@
 
     <modules>
         <module>shared</module>
-        <module>companies</module>
-        <module>laws</module>
+        <module>company</module>
+        <module>law</module>
+        <module>qdrant</module>
     </modules>
     
     <parent>

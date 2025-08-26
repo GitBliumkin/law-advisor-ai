@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - app-network
+
   postgres:
     container_name: postgres
     image: postgres:13
@@ -24,9 +35,9 @@ services:
     networks:
       - kafka-network
 
-  kafka:
+  lawadvisor-kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
+    container_name: lawadvisor-kafka
     depends_on:
       - zookeeper
     ports:
@@ -37,8 +48,12 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - kafka-network
+
+volumes:
+  qdrant_data:
 
 networks:
   kafka-network:

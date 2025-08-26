@@ -1,0 +1,23 @@
+# Core web + API
+fastapi
+uvicorn[standard]
+
+# Async Kafka client
+aiokafka
+
+# Data validation and models
+pydantic
+
+# Async browser crawling
+playwright
+lxml  # for LXMLWebScrapingStrategy
+
+# Markdown generation (if external package needed, otherwise remove)
+markdown
+
+# Logging and dev
+loguru
+
+# Testing (optional)
+pytest
+httpx
