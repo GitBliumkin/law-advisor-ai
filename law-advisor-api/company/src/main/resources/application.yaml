@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: company
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/company
+    username: user
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8081
+  
+mock-data:
+  path: src/test/resources/mock-data
+
+logging:
+  level:
+    org:
+      springframework: INFO

@@ -1,5 +1,8 @@
 package com.shared.models.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScrapedPageDto {
 	private String identifire;
     private String lawName;

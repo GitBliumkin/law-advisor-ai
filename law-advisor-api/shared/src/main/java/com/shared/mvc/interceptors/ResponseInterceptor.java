@@ -1,61 +1,88 @@
 package com.shared.mvc.interceptors;
 
-import com.shared.basecrud.dtos.responses.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.MDC;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.UUID;
+
 public class ResponseInterceptor implements HandlerInterceptor {
-  private static final Logger logger = LoggerFactory.getLogger(ResponseInterceptor.class);
+  private static final Logger log = LoggerFactory.getLogger(ResponseInterceptor.class);
+
+  private static final String START_TIME = "reqStartTimeNanos";
+  private static final String REQ_ID_HEADER = "X-Request-Id";
+  private static final String MDC_REQUEST_ID = "requestId";
 
   @Override
-  public boolean preHandle(
-      HttpServletRequest request, HttpServletResponse response, Object handler) {
-    logger.info("PreHandle: Processing request URI - {}", request.getRequestURI());
-    return true; // Allow the request to proceed
-  }
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    // Correlation id (reuse inbound header or generate)
+    String requestId = headerOrDefault(request, REQ_ID_HEADER, UUID.randomUUID().toString());
+    response.setHeader(REQ_ID_HEADER, requestId);
+    MDC.put(MDC_REQUEST_ID, requestId);
 
-  @Override
-  public void postHandle(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Object handler,
-      org.springframework.web.servlet.ModelAndView modelAndView) {
-    logger.info("PostHandle: Processed request URI - {}", request.getRequestURI());
-  }
+    request.setAttribute(START_TIME, System.nanoTime());
 
-  @Override
-  public void afterCompletion(
-      HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {}
-
-  /** Wraps successful responses into ResponseEntity with appropriate HTTP status. */
-  public ResponseEntity<Object> wrapResponse(HttpServletRequest request, Object response) {
+    String method = request.getMethod();
     String uri = request.getRequestURI();
-    HttpStatus status;
+    String qs = request.getQueryString();
+    String ip = clientIp(request);
+    String ua = safeUA(request);
 
-    if (response instanceof BaseResponse) {
-      BaseResponse baseResponse = (BaseResponse) response;
+    log.info("→ {} {}{} ip={} ua={}",
+        method, uri, (qs == null ? "" : "?" + qs), ip, ua);
 
-      // Determine HTTP status dynamically
-      if (baseResponse.getError() != null) {
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
-      } else if (uri.contains("/create")) {
-        status = HttpStatus.CREATED;
-      } else if (uri.contains("/delete")) {
-        status = HttpStatus.OK; // Return OK instead of NO_CONTENT to provide response data
+    return true; // proceed
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    try {
+      long start = (Long) request.getAttribute(START_TIME);
+      long tookMs = (System.nanoTime() - start) / 1_000_000;
+      int status = response.getStatus();
+
+      if (ex != null) {
+        log.error("← {} {} status={} took={}ms EXCEPTION: {}",
+            request.getMethod(), request.getRequestURI(), status, tookMs, ex.toString(), ex);
       } else {
-        status = HttpStatus.OK;
+        log.info("← {} {} status={} took={}ms",
+            request.getMethod(), request.getRequestURI(), status, tookMs);
       }
-
-      logger.info("Wrap Response: URI={}, Status={}, Response={}", uri, status, baseResponse);
-      return ResponseEntity.status(status).body(baseResponse);
+    } catch (Throwable swallow) {
+      // never let logging break the request lifecycle
+      log.debug("Interceptor logging failed", swallow);
+    } finally {
+      MDC.remove(MDC_REQUEST_ID);
     }
+  }
 
-    // If the response is not of type BaseResponse, default to OK.
-    return ResponseEntity.status(HttpStatus.OK).body(response);
+  // --- helpers ---
+
+  private static String headerOrDefault(HttpServletRequest req, String name, String def) {
+    String v = req.getHeader(name);
+    return (v == null || v.isBlank()) ? def : v;
+  }
+
+  private static String clientIp(HttpServletRequest req) {
+    // honor common proxy headers, fallback to remote addr
+    String h = req.getHeader("X-Forwarded-For");
+    if (h != null && !h.isBlank()) {
+      int comma = h.indexOf(',');
+      return comma > 0 ? h.substring(0, comma).trim() : h.trim();
+    }
+    h = req.getHeader("X-Real-IP");
+    if (h != null && !h.isBlank()) return h.trim();
+    return req.getRemoteAddr();
+  }
+
+  private static String safeUA(HttpServletRequest req) {
+    String ua = req.getHeader("User-Agent");
+    if (ua == null) return "-";
+    // keep log lines tidy; also avoid logging huge/binary UA
+    ua = ua.replaceAll("\\s+", " ");
+    return ua.length() > 200 ? ua.substring(0, 200) + "…" : ua;
   }
 }

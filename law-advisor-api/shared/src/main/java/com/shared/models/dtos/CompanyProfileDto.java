@@ -1,7 +1,9 @@
 package com.shared.models.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shared.basecrud.dtos.BaseDto;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CompanyProfileDto extends BaseDto {
   private String id;
   private String name;
