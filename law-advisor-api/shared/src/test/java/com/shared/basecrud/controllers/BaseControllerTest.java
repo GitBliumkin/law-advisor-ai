@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shared.basecrud.dtos.BaseDto;
 import com.shared.basecrud.dtos.requests.BaseRequest;
-import com.shared.basecrud.dtos.responses.BaseResponse;
 import com.shared.basecrud.handlers.BaseHandler;
 import com.shared.basecrud.tables.BaseTable;
 import com.shared.mvc.advice.GlobalApiExceptionHandler;
@@ -92,6 +92,8 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
         // handler.deleteMany(mockEntries);
     }
 
+    /* ===================== Generic JSON/fixture helpers ===================== */
+
     protected Request getMockRequest(String testKeyCamel) throws Exception {
         Optional<Request> dto = jsonFactory.getMockRequest(tableName, requestClass, testKeyCamel);
         if (dto.isPresent()) return dto.get();
@@ -135,13 +137,29 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
         }
     }
 
+    /** Assert every non-null field of a POJO exists and equals in the JSON at baseJsonPath (ex: "$.payload."). */
+    private void assertFields(ResultActions ra, String baseJsonPath, Object bean) throws Exception {
+        Map<String, Object> map = objectMapper.convertValue(bean, new TypeReference<Map<String, Object>>() {});
+        for (Map.Entry<String, Object> e : map.entrySet()) {
+            String field = e.getKey();
+            Object value = e.getValue();
+            if (value != null) {
+                ra.andExpect(jsonPath(baseJsonPath + field).value(value));
+            }
+            // If you WANT to assert nulls explicitly, swap the block above for:
+            // ra.andExpect(jsonPath(baseJsonPath + field, value == null ? nullValue() : is(value)));
+        }
+    }
+
+    /* ===================== Tests ===================== */
+
     @Test
     void baseGetAllHappyPath() throws Exception {
         Dto dto = getMockResponse("baseGetAllHappyPath");
         List<Dto> data = List.of(dto);
         when(handler.getAll(2, 0)).thenReturn(pageMap(data, 2, 0, 1, 1));
 
-        mockMvc.perform(get(getBaseUrl()).param("page", "0").param("size", "2"))
+        ResultActions ra = mockMvc.perform(get(getBaseUrl()).param("page", "0").param("size", "2"))
                .andExpect(status().isOk())
                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$.success").value(true))
@@ -152,6 +170,9 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
                .andExpect(jsonPath("$.payload.totalPages").value(1))
                .andExpect(jsonPath("$.payload.data.length()").value(1))
                .andExpect(jsonPath("$.error").doesNotExist());
+
+        // Generic field-by-field asserts for first item
+        assertFields(ra, "$.payload.data[0].", dto);
     }
 
     @Test
@@ -171,12 +192,15 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
         Dto dto = getMockResponse("baseGetByIdHappyPath");
         when(handler.getById("42")).thenReturn(dto);
 
-        mockMvc.perform(get(getBaseUrl() + "/42"))
+        ResultActions ra = mockMvc.perform(get(getBaseUrl() + "/42"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.success").value(true))
                .andExpect(jsonPath("$.serviceName").value(serviceName))
                .andExpect(jsonPath("$.payload").exists())
                .andExpect(jsonPath("$.error").doesNotExist());
+
+        // Generic field-by-field asserts for payload
+        assertFields(ra, "$.payload.", dto);
     }
 
     @Test
@@ -196,7 +220,7 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
         Dto respDto = getMockResponse("baseCreateHappyPath");
         when(handler.save(any())).thenReturn(respDto);
 
-        mockMvc.perform(post(getBaseUrl())
+        ResultActions ra = mockMvc.perform(post(getBaseUrl())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                .andExpect(status().isCreated())
@@ -204,6 +228,9 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
                .andExpect(jsonPath("$.serviceName").value(serviceName))
                .andExpect(jsonPath("$.payload").exists())
                .andExpect(jsonPath("$.error").doesNotExist());
+
+        // Generic asserts for payload
+        assertFields(ra, "$.payload.", respDto);
     }
 
     @Test
@@ -226,12 +253,14 @@ public abstract class BaseControllerTest<Request extends BaseRequest,
         Dto respDto = getMockResponse("baseUpdateHappyPath");
         when(handler.save(any())).thenReturn(respDto);
 
-        mockMvc.perform(put(getBaseUrl())
+        ResultActions ra = mockMvc.perform(put(getBaseUrl())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.success").value(true))
                .andExpect(jsonPath("$.payload").exists());
+
+        assertFields(ra, "$.payload.", respDto);
     }
 
     @Test
