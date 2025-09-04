@@ -1,32 +1,27 @@
 package com.shared.basecrud.dtos.responses;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shared.basecrud.dtos.BaseDto;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseListResponse<Dto extends BaseDto>
     extends BaseResponse<BaseListResponse.Payload<Dto>> {
 
-  private BaseListResponse(
-      String serviceName, boolean success, Payload<Dto> payload, String errorMessage) {
-    super(serviceName, success, payload, errorMessage);
+  private BaseListResponse(String serviceName, boolean success, Payload<Dto> payload, Error error) {
+    super(serviceName, success, payload, error);
   }
 
-  // ✅ Static factory method for success response
   public static <Dto extends BaseDto> BaseListResponse<Dto> success(
-      String serviceName,
-      List<Dto> data,
-      Integer size,
-      Integer page,
-      Integer totalCount,
-      Integer totalPages) {
-    return new BaseListResponse<>(
-        serviceName, true, new Payload<>(data, size, page, totalCount, totalPages), null);
+      String serviceName, List<Dto> data, Integer size, Integer page,
+      Integer totalCount, Integer totalPages) {
+    return new BaseListResponse<>(serviceName, true,
+        new Payload<>(data, size, page, totalCount, totalPages), null);
   }
 
-  // ✅ Static factory method for error response
   public static <Dto extends BaseDto> BaseListResponse<Dto> errorList(
-      String serviceName, String errorMessage) {
-    return new BaseListResponse<>(serviceName, false, null, errorMessage);
+      String serviceName, Error error) {
+    return new BaseListResponse<>(serviceName, false, null, error);
   }
 
   public static class Payload<Dto extends BaseDto> {
@@ -36,33 +31,14 @@ public class BaseListResponse<Dto extends BaseDto>
     private final Integer totalCount;
     private final Integer totalPages;
 
-    public Payload(
-        List<Dto> data, Integer size, Integer page, Integer totalCount, Integer totalPages) {
-      this.data = data;
-      this.size = size;
-      this.page = page;
-      this.totalCount = totalCount;
-      this.totalPages = totalPages;
+    public Payload(List<Dto> data, Integer size, Integer page, Integer totalCount, Integer totalPages) {
+      this.data = data; this.size = size; this.page = page;
+      this.totalCount = totalCount; this.totalPages = totalPages;
     }
-
-    public List<Dto> getData() {
-      return data;
-    }
-
-    public Integer getSize() {
-      return size;
-    }
-
-    public Integer getPage() {
-      return page;
-    }
-
-    public Integer getTotalCount() {
-      return totalCount;
-    }
-
-    public Integer getTotalPages() {
-      return totalPages;
-    }
+    public List<Dto> getData() { return data; }
+    public Integer getSize() { return size; }
+    public Integer getPage() { return page; }
+    public Integer getTotalCount() { return totalCount; }
+    public Integer getTotalPages() { return totalPages; }
   }
 }

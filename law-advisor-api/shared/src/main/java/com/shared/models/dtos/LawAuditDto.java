@@ -1,9 +1,11 @@
 package com.shared.models.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shared.basecrud.dtos.BaseDto;
 import com.shared.models.enums.ScraperIdentifires;
 import com.shared.models.enums.SupportedRegions;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LawAuditDto extends BaseDto {
 	
 	private String id;

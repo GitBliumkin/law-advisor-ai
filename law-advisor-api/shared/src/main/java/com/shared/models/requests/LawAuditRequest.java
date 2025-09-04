@@ -1,9 +1,11 @@
 package com.shared.models.requests;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shared.basecrud.dtos.requests.BaseRequest;
 import com.shared.models.enums.ScraperIdentifires;
 import com.shared.models.enums.SupportedRegions;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LawAuditRequest extends BaseRequest {
 	
 	private String id;

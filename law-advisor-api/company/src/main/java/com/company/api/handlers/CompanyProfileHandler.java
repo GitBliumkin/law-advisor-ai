@@ -20,7 +20,7 @@ public class CompanyProfileHandler
 
   @Override
   public CompanyProfileTable converRequestToRow(CompanyProfileRequest request) {
-	  CompanyProfileTable row = new CompanyProfileTable();
+	CompanyProfileTable row = new CompanyProfileTable();
     row.setId(request.getId());
     row.setName(request.getName());
     row.setProvince(request.getProvince());

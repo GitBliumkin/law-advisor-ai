@@ -1,6 +1,13 @@
 {
-  "happy_path": {
+  "baseCreateHappyPath": {
     "name": "Tech Corp",
-    "industry": "Software"
+    "province": "Ontario",
+    "country": "Canada"
+  },
+  "baseUpdateHappyPath": {
+	"id": "f92c93db-0a6a-42c7-9457-ca3d5ccc91f0",
+    "name": "Tech Corp Updated",
+    "province": "Ontario",
+    "country": "Canada"
   }
 }

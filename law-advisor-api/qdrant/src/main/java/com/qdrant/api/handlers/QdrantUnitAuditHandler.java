@@ -4,23 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qdrant.api.repositories.QdrantUnitsAuditRepository;
-import com.qdrant.api.tables.QdrantUnitsAuditTable;
-import com.shared.basecrud.handlers.BaseHandlerService;
-import com.shared.models.dtos.QdrantUnitsAuditDto;
-import com.shared.models.requests.QdrantUnitsAuditRequest;
+import com.qdrant.api.tables.QdrantUnitAuditTable;
+import com.shared.basecrud.handlers.BaseHandler;
+import com.shared.models.dtos.QdrantUnitAuditDto;
+import com.shared.models.requests.QdrantUnitAuditRequest;
 
 @Service
-public class QdrantUnitsAuditHandler 
-	extends BaseHandlerService<QdrantUnitsAuditRequest, QdrantUnitsAuditDto, QdrantUnitsAuditTable> {
+public class QdrantUnitAuditHandler extends BaseHandler<QdrantUnitAuditRequest, QdrantUnitAuditDto, QdrantUnitAuditTable> {
 	
 	  @Autowired
-	  protected QdrantUnitsAuditHandler(QdrantUnitsAuditRepository repository) {
+	  protected QdrantUnitAuditHandler(QdrantUnitsAuditRepository repository) {
 	    super(repository);
 	  }
 
 	  @Override
-	  protected QdrantUnitsAuditTable converRequestToRow(QdrantUnitsAuditRequest request) {
-	    QdrantUnitsAuditTable row = new QdrantUnitsAuditTable();
+	public QdrantUnitAuditTable converRequestToRow(QdrantUnitAuditRequest request) {
+	    QdrantUnitAuditTable row = new QdrantUnitAuditTable();
 	    row.setId(request.getId());
 	    row.setOrder(request.getOrder());
 	    row.setTitle(request.getTitle());
@@ -30,8 +29,8 @@ public class QdrantUnitsAuditHandler
 	  }
 
 	  @Override
-	  protected QdrantUnitsAuditDto convertRowToDto(QdrantUnitsAuditTable row) {
-	    QdrantUnitsAuditDto dto = new QdrantUnitsAuditDto();
+	public QdrantUnitAuditDto convertRowToDto(QdrantUnitAuditTable row) {
+	    QdrantUnitAuditDto dto = new QdrantUnitAuditDto();
 	    dto.setId(row.getId());
 	    dto.setOrder(row.getOrder());
 	    dto.setTitle(row.getTitle());

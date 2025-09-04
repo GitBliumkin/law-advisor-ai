@@ -2,62 +2,60 @@ package com.shared.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class JsonFactory {
 
-    private final String mockDataPath = "mock-data";
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private String mockDataPath = "mock-data";
     
     public JsonFactory(String mockDataPath) {
-//        this.mockDataPath = mockDataPath;
+    	this.mockDataPath = mockDataPath;
     }
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public <T> Optional<List<T>> getMockTableEntries(String tableName, Class<T> type) {
-        return loadJsonList(mockDataPath + "/table-data/" + tableName + ".json", type);
+        String p = mockDataPath + "/table-data/" + tableName + "-data.json";
+        return loadJsonListFromClasspath(p, type);
     }
 
     public <T> Optional<T> getMockRequest(String tableName, Class<T> type, String requestName) throws Exception {
-        if (requestName == null) {
-            throw new Exception("Mock request name was not provided");
-        }
-        return loadJsonObject(mockDataPath + "/mock-requests/" + tableName + "-requests.json", type, requestName);
+        if (requestName == null) throw new Exception("Mock request name was not provided");
+        String p = mockDataPath + "/mock-requests/" + tableName + "-requests.json";
+        return loadJsonObjectFromClasspath(p, type, requestName);
     }
 
     public <T> Optional<T> getMockResponse(String tableName, Class<T> type, String responseName) throws Exception {
-        if (responseName == null) {
-            throw new Exception("Mock response name was not provided");
-        }
-        return loadJsonObject(mockDataPath + "/mock-responses/" + tableName + "-responses.json", type, responseName);
+        if (responseName == null) throw new Exception("Mock response name was not provided");
+        String p = mockDataPath + "/mock-responses/" + tableName + "-responses.json";
+        return loadJsonObjectFromClasspath(p, type, responseName);
     }
 
-    private <T> Optional<List<T>> loadJsonList(String filePath, Class<T> type) {
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
-            return Optional.of(objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(List.class, type)));
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading JSON file: " + filePath, e);
+    private <T> Optional<List<T>> loadJsonListFromClasspath(String path, Class<T> type) {
+        try (InputStream in = new ClassPathResource(path).getInputStream()) {
+            return Optional.of(
+                objectMapper.readValue(in, objectMapper.getTypeFactory()
+                        .constructCollectionType(List.class, type))
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading JSON classpath resource: " + path, e);
         }
     }
 
-    private <T> Optional<T> loadJsonObject(String filePath, Class<T> type, String entryName) {
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
-            JsonNode rootNode = objectMapper.readTree(content);
-
-            if (rootNode.has(entryName)) {
-                return Optional.of(objectMapper.treeToValue(rootNode.get(entryName), type));
-            } else {
-                return Optional.empty();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading JSON file: " + filePath, e);
+    private <T> Optional<T> loadJsonObjectFromClasspath(String path, Class<T> type, String entryName) {
+        try (InputStream in = new ClassPathResource(path).getInputStream()) {
+            JsonNode root = objectMapper.readTree(in);
+            return root.has(entryName)
+                    ? Optional.of(objectMapper.treeToValue(root.get(entryName), type))
+                    : Optional.empty();
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading JSON classpath resource: " + path, e);
         }
     }
 }

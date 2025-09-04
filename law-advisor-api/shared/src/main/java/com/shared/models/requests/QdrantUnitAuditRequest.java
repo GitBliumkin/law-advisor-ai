@@ -1,8 +1,10 @@
 package com.shared.models.requests;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.shared.basecrud.dtos.requests.BaseRequest;
 import com.shared.models.enums.UnitType;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QdrantUnitAuditRequest extends BaseRequest{
 	
 	private String id;

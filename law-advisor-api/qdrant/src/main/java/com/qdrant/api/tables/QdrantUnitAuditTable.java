@@ -12,8 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "law_units_audit")
-public class QdrantUnitsAuditTable extends BaseTable {
+@Table(name = "qdrant_unit_audit")
+public class QdrantUnitAuditTable extends BaseTable {
 	
 
 	@Column(columnDefinition = "UUID", nullable = false)

@@ -11,7 +11,7 @@ import com.shared.models.dtos.CompanyProfileDto;
 import com.shared.models.requests.CompanyProfileRequest;
 
 @RestController
-@RequestMapping("/company-profiles")
+@RequestMapping("/company-profile")
 public class CompanyProfileController
     extends BaseController<CompanyProfileRequest, CompanyProfileDto, CompanyProfileTable> {
 

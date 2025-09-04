@@ -8,14 +8,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.shared.mvc.interceptors.ResponseInterceptor;
 
 @Configuration
-public class SharedConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 	@Bean
 	public ResponseInterceptor responseInterceptor() {
 		return new ResponseInterceptor();
 	}
 
 	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(responseInterceptor()).addPathPatterns("/api/**"); // Apply to all API endpoints
-	}
+	  public void addInterceptors(InterceptorRegistry registry) {
+	    registry.addInterceptor(new ResponseInterceptor()).order(0);
+	  }
 }
