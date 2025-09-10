@@ -11,6 +11,12 @@ Thumbs.db
 *.iml
 *.sublime-workspace
 
+# Eclipse specific
+.project
+.classpath
+.settings/
+*.prefs
+
 ### Logs ###
 logs/
 *.log
