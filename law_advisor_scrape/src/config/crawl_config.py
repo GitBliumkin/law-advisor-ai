@@ -45,28 +45,22 @@ KAFKA_SETTINGS = {
 PROVINCE_SETTINGS = {
     "FED": {
         "name": "Federal",
-        "crawler_module": "crawlers.fed",
+        "crawler_module": "src.crawlers.federal_crawler",
         "crawler_class": "FederalCrawler",
     },
-    "ONT": {
+    "ON": {
         "name": "Ontario",
-        "crawler_module": "crawlers.on",
+        "crawler_module": "src.crawlers.ontario_crawler",
         "crawler_class": "OntarioCrawler",
     },
     "BC": {
         "name": "British Columbia",
-        "crawler_module": "crawlers.bc",
+        "crawler_module": "src.crawlers.bc_crawler",
         "crawler_class": "BritishColumbiaCrawler",
     },
 }
 
 def get_links() -> List[Dict[str, Any]]:
-    """
-    Load links from the links.json file.
-    
-    Returns:
-        List[Dict[str, Any]]: List of link dictionaries
-    """
     try:
         with open(LINKS_FILE, "r") as f:
             return json.load(f)
@@ -74,44 +68,25 @@ def get_links() -> List[Dict[str, Any]]:
         raise Exception(f"Error loading links file: {e}")
 
 def get_link_by_identifier(identifier: str) -> Optional[Dict[str, Any]]:
-    """
-    Get a link by its identifier.
-    
-    Args:
-        identifier (str): Link identifier (e.g., FED_CLC)
-        
-    Returns:
-        Optional[Dict[str, Any]]: Link dictionary or None if not found
-    """
     links = get_links()
-    for link in links:
-        if link["identifier"] == identifier:
-            return link
+    for province_entry in links:
+        pages = province_entry.get("pages", [])
+        for page in pages:
+            if page.get("identifier") == identifier:
+                # Include province info in the returned result
+                return {
+                    **page,
+                    "province": province_entry["province"]
+                }
     return None
 
 def get_links_by_province(province: str) -> List[Dict[str, Any]]:
-    """
-    Get all links for a specific province.
-    
-    Args:
-        province (str): Province code (e.g., FED, ONT)
-        
-    Returns:
-        List[Dict[str, Any]]: List of link dictionaries for the province
-    """
     links = get_links()
     return [link for link in links if link["province"] == province]
 
 def get_province_settings(province: str) -> Dict[str, Any]:
-    """
-    Get settings for a specific province.
-    
-    Args:
-        province (str): Province code (e.g., FED, ONT)
-        
-    Returns:
-        Dict[str, Any]: Province settings
-    """
+    province = province.upper()
+
     if province not in PROVINCE_SETTINGS:
         raise ValueError(f"Unknown province: {province}")
     return PROVINCE_SETTINGS[province]
