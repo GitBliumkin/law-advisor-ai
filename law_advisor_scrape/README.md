@@ -13,28 +13,6 @@ A Python-based system for extracting, structuring, and formatting Canadian emplo
 - 🐳 Docker-compatible
 - 🧪 Unit tested
 
----
-
-## 📁 Project Structure
-
-```
-legislative_crawler/
-├── cli/                  # CLI interface
-├── api/                  # FastAPI endpoints
-├── crawlers/             # Province-specific crawlers
-├── kafka/                # Kafka consumer & producer
-├── config/               # App + Kafka configuration
-├── resources/            # links.json with legislation metadata
-├── utils/                # Logging, helpers
-├── tests/                # Unit tests
-├── scraper_lambda.py     # Kafka Lambda entrypoint
-├── requirements.txt      # All dependencies
-├── Dockerfile
-└── README.md
-```
-
----
-
 ## 🧰 Installation
 
 ### ✅ Prerequisites
@@ -60,6 +38,9 @@ pip install -r requirements.txt
 # Install Playwright browsers
 python -m playwright install
 ```
+ 
+# Install Playwright browsers
+pip install sentence-transformers
 
 ---
 
@@ -69,7 +50,7 @@ python -m playwright install
 
 ```bash
 # Crawl a specific law
-python -m legislative_crawler.main FED_CLC
+python -m src.cli.main ON_ESA --output-json out.json
 
 # Crawl all laws in a province
 python -m legislative_crawler.main ON
@@ -112,27 +93,10 @@ docker build -t legislative-crawler .
 docker run -p 8000:8000 legislative-crawler
 ```
 
----
-
-## ⚙️ Configuration
-
-Available via environment variables:
-
-| Variable | Purpose |
-|----------|---------|
-| `KAFKA_BOOTSTRAP_SERVERS` | e.g. `localhost:9092` |
-| `KAFKA_REQUEST_TOPIC`     | Kafka input topic |
-| `KAFKA_RESPONSE_TOPIC`    | Kafka output topic |
-| `KAFKA_CONSUMER_GROUP`    | Kafka group ID |
-| `LINKS_FILE`              | Path to links.json |
-| `API_HOST`, `API_PORT`, `API_RELOAD` | FastAPI settings |
-
----
-
 ## 🧪 Testing
 
 ```bash
-pytest tests/
+py -m pytest -v
 ```
 
 ---

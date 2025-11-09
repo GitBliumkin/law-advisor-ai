@@ -41,4 +41,13 @@ class CrawlerRouter:
 
     @staticmethod
     async def crawl_law(crawler, law: Dict[str, Any]) -> Dict[str, Any]:
-        return await crawler.crawl(law["url"])
+        return await crawler.crawl(
+            url=law["url"],
+            identifier=law.get("identifier") or law.get("identifire"),
+            law_name=law.get("law_name") or law.get("lawName"),
+        )
+
+    @staticmethod
+    async def crawl_all_laws(crawler, laws: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        tasks = [CrawlerRouter.crawl_law(crawler, law) for law in laws]
+        return await asyncio.gather(*tasks)
